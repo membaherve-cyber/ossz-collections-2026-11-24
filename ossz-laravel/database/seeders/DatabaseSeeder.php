@@ -19,10 +19,12 @@ use App\Support\Auth;
 use Illuminate\Database\Seeder;
 
 /**
- * Seeds the same reference data the Next.js shop bootstrapped itself with
- * (scripts/seed.mjs, seed-fr.mjs, seed-real.mjs, seed-staff-logins.mjs):
- * staff logins, categories, collections, catalogue pieces, delivery zones,
- * settings, homepage blocks, FAQs, journal and a welcome coupon.
+ * Seeds the live OSSZ catalogue — the same reference data the Next.js shop
+ * bootstrapped itself with (scripts/seed.mjs + seed-real.mjs + seed-fr.mjs):
+ * staff logins, categories, the three real collections (Wouri Nights,
+ * Atelier Essentials, Sawa Sun), the twelve-piece real catalogue with its
+ * dedicated photography, delivery zones, settings, the three live homepage
+ * blocks, FAQs, three journal articles, the lookbook and a welcome coupon.
  */
 class DatabaseSeeder extends Seeder
 {
@@ -63,78 +65,237 @@ class DatabaseSeeder extends Seeder
             ['name' => 'Tie / Cravate', 'name_fr' => 'Cravate', 'slug' => 'tie-cravate', 'sort_order' => 12],
             ['name' => 'Bold Tie', 'name_fr' => 'Cravate audacieuse', 'slug' => 'bold-tie', 'sort_order' => 13],
             ['name' => 'Accessories', 'name_fr' => 'Accessoires', 'slug' => 'accessories', 'sort_order' => 14],
+            // Categories used by the live catalogue
+            ['name' => 'Evening', 'name_fr' => 'Soirée', 'slug' => 'evening', 'sort_order' => 100],
+            ['name' => 'Tailoring', 'name_fr' => 'Tailleur', 'slug' => 'tailoring', 'sort_order' => 101],
+            ['name' => 'Knitwear', 'name_fr' => 'Maille', 'slug' => 'knitwear', 'sort_order' => 102],
         ];
         foreach ($categories as $c) {
             Category::updateOrCreate(['slug' => $c['slug']], $c);
         }
 
-        // ── Collections ────────────────────────────────────────────────
+        // ── Collections (the three live ones) ──────────────────────────
         $collections = [
-            ['name' => 'Check Moves', 'slug' => 'check-moves', 'season' => '2023', 'description' => 'Geometric precision meets bold pattern.', 'name_fr' => 'Check Moves', 'season_fr' => '2023', 'description_fr' => 'Précision géométrique et motifs audacieux.', 'cover_image' => '/collections/check-moves.webp'],
-            ['name' => 'Freeme', 'slug' => 'freeme', 'season' => '2021', 'description' => 'Freedom expressed in fabric.', 'name_fr' => 'Freeme', 'season_fr' => '2021', 'description_fr' => 'La liberté exprimée en tissu.', 'cover_image' => '/collections/freeme.webp'],
-            ['name' => '95 VIVS Element', 'slug' => '95-vivs-element', 'season' => '2022', 'description' => 'A tribute to Douala streets.', 'name_fr' => '95 VIVS Élément', 'season_fr' => '2022', 'description_fr' => 'Un hommage aux rues de Douala.', 'cover_image' => '/collections/95-vivs.webp'],
-            ['name' => 'Cultural Canvas', 'slug' => 'cultural-canvas', 'season' => '2024', 'description' => 'Every garment is a canvas.', 'name_fr' => 'Toile Culturelle', 'season_fr' => '2024', 'description_fr' => 'Chaque vêtement est une toile.', 'cover_image' => '/collections/cultural-canvas.webp'],
-            ['name' => 'Cultural Heritage', 'slug' => 'cultural-heritage', 'season' => '2024', 'description' => 'The pieces that outlast seasons.', 'name_fr' => 'Patrimoine Culturel', 'season_fr' => '2024', 'description_fr' => 'Les pièces qui survivent aux saisons.', 'cover_image' => '/collections/cultural-heritage.webp'],
+            [
+                'name' => 'Wouri Nights', 'name_fr' => 'Nuits du Wouri', 'slug' => 'wouri-nights',
+                'season' => 'Season 04', 'season_fr' => 'Saison 04',
+                'description' => 'Evening pieces cut for the long, warm nights along the Wouri — fluid silks, hand-finished seams and a restrained shimmer.',
+                'description_fr' => 'Des pièces de soirée taillées pour les longues nuits chaudes du Wouri — soies fluides, coutures finies à la main et un éclat retenu.',
+                'cover_image' => '/catalogue/charcoal-draped-look-3.jpg', 'is_featured' => true, 'sort_order' => 0,
+            ],
+            [
+                'name' => 'Atelier Essentials', 'name_fr' => "Essentiels d'Atelier", 'slug' => 'atelier-essentials',
+                'season' => 'Permanent', 'season_fr' => 'Permanente',
+                'description' => 'The quiet backbone of the OSSZ wardrobe: precise tailoring, honest cottons and pieces built to be worn for a decade.',
+                'description_fr' => 'La colonne vertébrale discrète du vestiaire OSSZ : tailleur précis, cotons honnêtes et pièces faites pour durer dix ans.',
+                'cover_image' => '/catalogue/camel-tailored-coat-2.jpg', 'is_featured' => true, 'sort_order' => 1,
+            ],
+            [
+                'name' => 'Sawa Sun', 'name_fr' => 'Soleil Sawa', 'slug' => 'sawa-sun',
+                'season' => 'Season 03', 'season_fr' => 'Saison 03',
+                'description' => 'Light, breathable daywear inspired by Douala mornings — loose linen, raffia detail and colours drawn from the coast.',
+                'description_fr' => 'Des vêtements de jour légers et respirants inspirés des matins de Douala — lin fluide, détails en raphia et couleurs de la côte.',
+                'cover_image' => '/catalogue/olive-safari-set-2.jpg', 'is_featured' => false, 'sort_order' => 2,
+            ],
         ];
-        foreach ($collections as $i => $col) {
-            Collection::updateOrCreate(['slug' => $col['slug']], $col + ['sort_order' => $i]);
+        foreach ($collections as $col) {
+            Collection::updateOrCreate(['slug' => $col['slug']], $col);
         }
 
-        // ── Catalogue ──────────────────────────────────────────────────
+        // ── Catalogue — the twelve live pieces and their photography ───
         $pieces = [
-            ['name' => 'Midnight Agbada', 'name_fr' => 'Agbada Minuit', 'base_price' => 185000, 'category' => 'agbada', 'collection' => 'cultural-heritage', 'featured' => true, 'description' => 'Three-piece agbada in deep midnight adire, hand-embroidered at the neckline.', 'description_fr' => 'Agbada trois pièces en adire bleu minuit, brodé main au col.'],
-            ['name' => 'Ivory Kaftan', 'name_fr' => 'Kaftan Ivoire', 'base_price' => 95000, 'category' => 'kaftans', 'collection' => 'cultural-canvas', 'featured' => true, 'description' => 'Flowing silk-blend kaftan in ivory with raffia trim.', 'description_fr' => 'Kaftan fluide en soie mélangée, ivoire, avec liseré en raphia.'],
-            ['name' => 'Liberty Silk Shirt', 'name_fr' => 'Chemise Soie Liberté', 'base_price' => 45000, 'category' => 'shirts', 'collection' => 'freeme', 'description' => 'Relaxed silk shirt with tonal embroidery.', 'description_fr' => 'Chemise en soie décontractée avec broderie tonale.'],
-            ['name' => 'Palazzo Trousers', 'name_fr' => 'Pantalon Palazzo', 'base_price' => 55000, 'category' => 'pants', 'collection' => '95-vivs-element', 'description' => 'High-waisted palazzo trousers in crisp cotton.', 'description_fr' => 'Pantalon palazzo taille haute en coton net.'],
-            ['name' => 'Heritage Bold Tie', 'name_fr' => 'Cravate Héritage', 'base_price' => 25000, 'category' => 'bold-tie', 'collection' => 'cultural-heritage', 'description' => 'Wide silk tie in heritage wax print.', 'description_fr' => 'Cravate large en soie, imprimé wax patrimonial.'],
-            ['name' => 'Urban Sandals', 'name_fr' => 'Sandales Urbaines', 'base_price' => 35000, 'category' => 'sandals', 'collection' => '95-vivs-element', 'description' => 'Leather sandals with woven raffia footbed.', 'description_fr' => 'Sandales en cuir à semelle tressée en raphia.'],
-            ['name' => 'Check Move Blazer', 'name_fr' => 'Blazer Check Moves', 'base_price' => 125000, 'category' => 'ready-to-wear', 'collection' => 'check-moves', 'featured' => true, 'description' => 'Single-breasted blazer in signature check wool.', 'description_fr' => 'Blazer une pièce en laine à carreaux signature.'],
-            ['name' => 'Danshiki Moderne', 'name_fr' => 'Danshiki Moderne', 'base_price' => 65000, 'category' => 'danshiki', 'collection' => 'freeme', 'description' => 'Contemporary danshiki tunic with woven neckline.', 'description_fr' => 'Tunique danshiki contemporaine à col tissé.'],
-            ['name' => 'Leather Weekend Bag', 'name_fr' => 'Sac Week-end Cuir', 'base_price' => 85000, 'category' => 'bags', 'collection' => 'cultural-heritage', 'description' => 'Weekender in vegetable-tanned leather.', 'description_fr' => 'Sac de week-end en cuir à tannage végétal.'],
-            ['name' => 'Silk Cravat Set', 'name_fr' => 'Ensemble Cravate Soie', 'base_price' => 32000, 'category' => 'tie-cravate', 'collection' => 'check-moves', 'description' => 'Cravat and pocket square in printed silk.', 'description_fr' => 'Foulard cravate et pochette en soie imprimée.'],
-            ['name' => 'Oversize Boubou', 'name_fr' => 'Boubou Oversize', 'base_price' => 75000, 'category' => 'oversize', 'collection' => 'freeme', 'description' => 'Oversize boubou in airy hand-woven cotton.', 'description_fr' => 'Boubou oversize en coton tissé main aérien.'],
-            ['name' => 'Gold Cufflinks', 'name_fr' => 'Boutons de Manchette Dorés', 'base_price' => 28000, 'category' => 'cufflinks', 'collection' => 'cultural-heritage', 'description' => 'Engraved brass cufflinks with amber stone.', 'description_fr' => 'Boutons de manchette en laiton gravé, pierre ambrée.'],
+            [
+                'key' => 'ivory-occasion-gown', 'name' => 'Ivoire Occasion Gown', 'name_fr' => "Robe d'Occasion Ivoire",
+                'cat' => 'evening', 'col' => 'wouri-nights', 'base_price' => 295000, 'featured' => true,
+                'description' => 'A softly structured occasion gown in ivory, photographed in our Douala studio.',
+                'description_fr' => 'Une robe d\'occasion à la structure souple, en ivoire, photographiée dans notre studio de Douala.',
+                'details' => 'Fluid lining with a sculpted bodice. Concealed back closure. Finished by hand in Akwa.',
+                'details_fr' => 'Doublure fluide et buste sculpté. Fermeture dos dissimulée. Finie à la main à Akwa.',
+                'care' => 'Dry clean only. Store on a padded hanger.', 'care_fr' => 'Nettoyage à sec uniquement. Conserver sur un cintre rembourré.',
+                'colours' => ['Ivory', 'Champagne'],
+            ],
+            [
+                'key' => 'mauve-signature-set', 'name' => 'Mauve Signature Set', 'name_fr' => 'Ensemble Signature Mauve',
+                'cat' => 'ready-to-wear', 'col' => 'wouri-nights', 'base_price' => 245000, 'featured' => true,
+                'description' => 'A two-piece signature set in soft mauve, cut for movement and evening light.',
+                'description_fr' => 'Un ensemble deux pièces signature en mauve doux, taillé pour le mouvement et la lumière du soir.',
+                'details' => 'Matching separates. Relaxed shoulder, tapered waist. Lined throughout.',
+                'details_fr' => 'Pièces assorties. Épaule décontractée, taille ajustée. Entièrement doublé.',
+                'care' => 'Dry clean recommended.', 'care_fr' => 'Nettoyage à sec recommandé.',
+                'colours' => ['Mauve', 'Rose'],
+            ],
+            [
+                'key' => 'teal-evening-piece', 'name' => 'Wouri Teal Evening Piece', 'name_fr' => 'Pièce du Soir Sarcelle Wouri',
+                'cat' => 'evening', 'col' => 'wouri-nights', 'base_price' => 268000, 'featured' => true,
+                'description' => 'Deep teal evening wear with a quiet sheen, made for the long nights along the Wouri.',
+                'description_fr' => 'Une tenue de soirée sarcelle profond au lustre discret, pensée pour les longues nuits du Wouri.',
+                'details' => 'Weighted drape. Hand-finished seams. Full lining.',
+                'details_fr' => 'Tombé lesté. Coutures finies main. Doublure complète.',
+                'care' => 'Dry clean only.', 'care_fr' => 'Nettoyage à sec uniquement.',
+                'colours' => ['Teal', 'Obsidian'],
+            ],
+            [
+                'key' => 'burgundy-statement', 'name' => 'Burgundy Statement Gown', 'name_fr' => 'Robe Déclaration Bordeaux',
+                'cat' => 'evening', 'col' => 'wouri-nights', 'base_price' => 312000, 'featured' => true,
+                'description' => 'A deep burgundy statement piece with sculptural volume through the skirt.',
+                'description_fr' => 'Une pièce déclaration bordeaux profond, au volume sculptural sur la jupe.',
+                'details' => 'Structured underskirt. Boned bodice. Made to order in three weeks.',
+                'details_fr' => 'Jupon structuré. Buste baleiné. Fabriquée sur commande en trois semaines.',
+                'care' => 'Specialist dry clean.', 'care_fr' => 'Nettoyage à sec spécialisé.',
+                'colours' => ['Burgundy', 'Oxblood'],
+            ],
+            [
+                'key' => 'amber-heritage-look', 'name' => 'Amber Heritage Look', 'name_fr' => 'Ensemble Patrimoine Ambre',
+                'cat' => 'ready-to-wear', 'col' => 'sawa-sun', 'base_price' => 186000, 'featured' => true,
+                'description' => 'Warm amber tones drawn from Cameroonian heritage textiles, shown in four views.',
+                'description_fr' => 'Des tons ambrés chauds inspirés des textiles patrimoniaux camerounais, présentés en quatre vues.',
+                'details' => 'Woven detail at the yoke. Breathable weight. Generous through the sleeve.',
+                'details_fr' => 'Détail tissé à l\'empiècement. Grammage respirant. Manche généreuse.',
+                'care' => 'Gentle hand wash. Line dry in shade.', 'care_fr' => 'Lavage main délicat. Séchage à l\'ombre.',
+                'colours' => ['Amber', 'Ochre'],
+            ],
+            [
+                'key' => 'charcoal-draped-look', 'name' => 'Charcoal Draped Look', 'name_fr' => 'Ensemble Drapé Anthracite',
+                'cat' => 'tailoring', 'col' => 'atelier-essentials', 'base_price' => 198000, 'featured' => false,
+                'description' => 'A charcoal draped silhouette, photographed from three angles in studio.',
+                'description_fr' => 'Une silhouette drapée anthracite, photographiée sous trois angles en studio.',
+                'details' => 'Asymmetric drape. Wool-blend suiting. Half-lined.',
+                'details_fr' => 'Drapé asymétrique. Laine mélangée. Demi-doublure.',
+                'care' => 'Dry clean. Brush after wear.', 'care_fr' => 'Nettoyage à sec. Brosser après le port.',
+                'colours' => ['Charcoal', 'Slate'],
+            ],
+            [
+                'key' => 'camel-tailored-coat', 'name' => 'Camel Tailored Coat', 'name_fr' => 'Manteau Tailleur Camel',
+                'cat' => 'tailoring', 'col' => 'atelier-essentials', 'base_price' => 275000, 'featured' => false,
+                'description' => 'A camel coat cut long and clean, the quiet backbone of a considered wardrobe.',
+                'description_fr' => 'Un manteau camel coupé long et net, colonne vertébrale discrète d\'un vestiaire réfléchi.',
+                'details' => 'Notch lapel. Horn buttons. Vented back.',
+                'details_fr' => 'Revers cranté. Boutons en corne. Dos aéré.',
+                'care' => 'Dry clean. Do not tumble dry.', 'care_fr' => 'Nettoyage à sec. Ne pas sécher en machine.',
+                'colours' => ['Camel', 'Sand'],
+            ],
+            [
+                'key' => 'olive-safari-set', 'name' => 'Olive Safari Set', 'name_fr' => 'Ensemble Safari Olive',
+                'cat' => 'ready-to-wear', 'col' => 'sawa-sun', 'base_price' => 164000, 'featured' => false,
+                'description' => 'An olive safari set in breathable cotton, made for Douala mornings.',
+                'description_fr' => 'Un ensemble safari olive en coton respirant, pensé pour les matins de Douala.',
+                'details' => 'Patch pockets. Self belt. Unlined for the heat.',
+                'details_fr' => 'Poches plaquées. Ceinture assortie. Non doublé pour la chaleur.',
+                'care' => 'Machine wash cold, gentle cycle.', 'care_fr' => 'Lavage machine à froid, cycle délicat.',
+                'colours' => ['Olive', 'Khaki'],
+            ],
+            [
+                'key' => 'midnight-column', 'name' => 'Midnight Column Dress', 'name_fr' => 'Robe Colonne Minuit',
+                'cat' => 'evening', 'col' => 'wouri-nights', 'base_price' => 232000, 'featured' => false,
+                'description' => 'A midnight-blue column dress that skims rather than clings.',
+                'description_fr' => 'Une robe colonne bleu minuit qui effleure le corps sans le mouler.',
+                'details' => 'Bias cut. Hidden side zip. Fully lined.',
+                'details_fr' => 'Coupe en biais. Fermeture latérale invisible. Entièrement doublée.',
+                'care' => 'Dry clean only.', 'care_fr' => 'Nettoyage à sec uniquement.',
+                'colours' => ['Midnight', 'Navy'],
+            ],
+            [
+                'key' => 'periwinkle-drape', 'name' => 'Periwinkle Drape Gown', 'name_fr' => 'Robe Drapée Pervenche',
+                'cat' => 'evening', 'col' => 'wouri-nights', 'base_price' => 288000, 'featured' => false,
+                'description' => 'A periwinkle gown with a single sculpted shoulder and a long, quiet fall.',
+                'description_fr' => 'Une robe pervenche à l\'épaule sculptée unique et à la chute longue et discrète.',
+                'details' => 'One-shoulder construction. Internal corsetry. Floor length.',
+                'details_fr' => 'Construction une épaule. Corseterie interne. Longueur au sol.',
+                'care' => 'Specialist dry clean.', 'care_fr' => 'Nettoyage à sec spécialisé.',
+                'colours' => ['Periwinkle'],
+            ],
+            [
+                'key' => 'sand-linen-look', 'name' => 'Sand Linen Look', 'name_fr' => 'Ensemble Lin Sable',
+                'cat' => 'ready-to-wear', 'col' => 'sawa-sun', 'base_price' => 142000, 'featured' => false,
+                'description' => 'Washed sand linen, soft from the first wear.',
+                'description_fr' => 'Un lin sable lavé, doux dès le premier port.',
+                'details' => 'European linen. Mother-of-pearl buttons. Relaxed fit.',
+                'details_fr' => 'Lin européen. Boutons en nacre. Coupe décontractée.',
+                'care' => 'Machine wash cold. Warm iron.', 'care_fr' => 'Lavage machine à froid. Repassage tiède.',
+                'colours' => ['Sand', 'Ivory'],
+            ],
+            [
+                'key' => 'noir-editorial', 'name' => 'Noir Editorial Piece', 'name_fr' => 'Pièce Éditoriale Noir',
+                'cat' => 'evening', 'col' => 'atelier-essentials', 'base_price' => 254000, 'featured' => false,
+                'description' => 'A black editorial piece, shot for the house lookbook.',
+                'description_fr' => 'Une pièce éditoriale noire, photographiée pour le lookbook de la maison.',
+                'details' => 'Sculpted shoulder. Matte finish. Fully lined.',
+                'details_fr' => 'Épaule sculptée. Finition mate. Entièrement doublée.',
+                'care' => 'Dry clean only.', 'care_fr' => 'Nettoyage à sec uniquement.',
+                'colours' => ['Noir'],
+            ],
         ];
 
-        foreach ($pieces as $piece) {
-            $category = Category::where('slug', $piece['category'])->first();
-            $collection = Collection::where('slug', $piece['collection'])->first();
-            if (! $category || ! $collection) {
+        // Photography: two-angle galleries for the premium pieces, one image
+        // for the rest — no photograph appears twice on the site.
+        $photos = [
+            'ivory-occasion-gown' => ['/catalogue/ivory-occasion-gown-1.jpg', '/catalogue/ivory-occasion-gown-2.jpg'],
+            'mauve-signature-set' => ['/catalogue/mauve-signature-set-1.jpg', '/catalogue/mauve-signature-set-2.jpg'],
+            'teal-evening-piece' => ['/catalogue/teal-evening-piece-1.jpg', '/catalogue/teal-evening-piece-2.jpg'],
+            'burgundy-statement' => ['/catalogue/burgundy-statement-1.jpg', '/catalogue/burgundy-statement-2.jpg'],
+            'amber-heritage-look' => ['/catalogue/amber-heritage-look-1.jpg', '/catalogue/amber-heritage-look-2.jpg'],
+            'charcoal-draped-look' => ['/catalogue/charcoal-draped-look-1.jpg', '/catalogue/charcoal-draped-look-2.jpg'],
+            'camel-tailored-coat' => ['/catalogue/camel-tailored-coat-1.jpg'],
+            'olive-safari-set' => ['/catalogue/olive-safari-set-1.jpg'],
+            'midnight-column' => ['/catalogue/midnight-column-1.jpg'],
+            'periwinkle-drape' => ['/catalogue/periwinkle-drape-1.jpg'],
+            'sand-linen-look' => ['/catalogue/sand-linen-look-1.jpg'],
+            'noir-editorial' => ['/catalogue/noir-editorial-1.jpg'],
+        ];
+
+        $sizes = ['XS', 'S', 'M', 'L'];
+        $catsBySlug = Category::pluck('id', 'slug');
+        $colsBySlug = Collection::pluck('id', 'slug');
+
+        foreach ($pieces as $i => $piece) {
+            $photos[$piece['key']] ??= [];
+            if (count($photos[$piece['key']]) === 0) {
                 continue;
             }
+            $slug = slugify($piece['name']);
 
             $product = Product::updateOrCreate(
-                ['slug' => slugify($piece['name'])],
+                ['slug' => $slug],
                 [
                     'name' => $piece['name'],
-                    'name_fr' => $piece['name_fr'] ?? '',
-                    'description' => $piece['description'] ?? '',
-                    'description_fr' => $piece['description_fr'] ?? '',
-                    'details' => 'Hand-finished in our Douala atelier.',
-                    'details_fr' => 'Fini à la main dans notre atelier de Douala.',
-                    'care_instructions' => 'Dry clean only. Store folded in the provided garment bag.',
-                    'care_instructions_fr' => 'Nettoyage à sec uniquement. Ranger plié dans la housse fournie.',
-                    'category_id' => $category->id,
-                    'collection_id' => $collection->id,
+                    'name_fr' => $piece['name_fr'],
+                    'description' => $piece['description'],
+                    'description_fr' => $piece['description_fr'],
+                    'details' => $piece['details'],
+                    'details_fr' => $piece['details_fr'],
+                    'care_instructions' => $piece['care'],
+                    'care_instructions_fr' => $piece['care_fr'],
+                    'category_id' => $catsBySlug[$piece['cat']] ?? null,
+                    'collection_id' => $colsBySlug[$piece['col']] ?? null,
                     'base_price' => $piece['base_price'],
                     'is_published' => true,
-                    'is_featured' => (bool) ($piece['featured'] ?? false),
-                    'popularity' => random_int(3, 40),
+                    'is_featured' => (bool) $piece['featured'],
+                    'popularity' => 100 - $i * 6,
+                    'seo_title' => $piece['name'].' — OSSZ Collections',
+                    'seo_description' => mb_substr($piece['description'], 0, 155),
                 ]
             );
 
-            $colours = ['Ivory', 'Noir', 'Sand'];
-            foreach (['S', 'M', 'L'] as $i => $size) {
-                ProductVariant::updateOrCreate(
-                    ['product_id' => $product->id, 'size' => $size, 'colour' => $colours[$i % 3]],
-                    ['stock_qty' => random_int(2, 12), 'low_stock_threshold' => 3]
+            // Gallery: every photo of the same article becomes a slide, in order.
+            foreach ($photos[$piece['key']] as $j => $url) {
+                ProductImage::updateOrCreate(
+                    ['product_id' => $product->id, 'sort_order' => $j],
+                    ['url' => $url, 'alt_text' => $piece['name'].' — view '.($j + 1)]
                 );
             }
 
-            ProductImage::updateOrCreate(
-                ['product_id' => $product->id, 'sort_order' => 0],
-                ['url' => '/catalogue/'.$category->slug.'.webp', 'alt_text' => $piece['name']]
-            );
+            foreach ($piece['colours'] as $colour) {
+                foreach ($sizes as $k => $size) {
+                    ProductVariant::updateOrCreate(
+                        ['product_id' => $product->id, 'size' => $size, 'colour' => $colour],
+                        [
+                            'sku' => strtoupper(mb_substr($slug, 0, 8)).'-'.$size.'-'.strtoupper(mb_substr($colour, 0, 3)),
+                            'stock_qty' => (($i + $k) % 5) + 2,
+                            'low_stock_threshold' => 3,
+                        ]
+                    );
+                }
+            }
         }
 
         // ── Delivery zones ─────────────────────────────────────────────
@@ -163,45 +324,48 @@ class DatabaseSeeder extends Seeder
             Setting::updateOrCreate(['key' => $key], ['value' => $value]);
         }
 
-        // ── Homepage blocks ────────────────────────────────────────────
+        // ── Homepage blocks — the three live ones ──────────────────────
         HomeBlock::updateOrCreate(
             ['type' => 'hero', 'sort_order' => 0],
             [
-                'heading' => 'A Douala atelier, an African hand, a modern wardrobe',
-                'heading_fr' => 'Un atelier à Douala, une main africaine, un vestiaire moderne',
-                'body' => '',
-                'image_url' => '/catalogue/editorial-b.webp',
-                'cta_label' => 'Shop the collection',
-                'cta_label_fr' => 'Voir la collection',
-                'cta_href' => '/shop',
+                'eyebrow' => '',
+                'heading' => 'Bring Out The Class in You',
+                'heading_fr' => 'Révélez la classe en vous',
+                'body' => 'Hand-finished silks and quiet tailoring, made in our Ange Raphael atelier and delivered across Cameroon.',
+                'body_fr' => 'Un service de couture sur mesure haut de gamme. Créés au sein de notre atelier de Douala et expédiés en toute sécurité dans toutes les régions du Cameroun.',
+                'image_url' => '/catalogue/editorial-hero.jpg',
+                'cta_label' => 'Discover our collections',
+                'cta_label_fr' => 'Découvrir nos collections',
+                'cta_href' => '/collections',
                 'is_published' => true,
             ]
         );
         HomeBlock::updateOrCreate(
             ['type' => 'banner', 'sort_order' => 1],
             [
-                'eyebrow' => 'Cultural Heritage',
-                'eyebrow_fr' => 'Patrimoine Culturel',
-                'heading' => 'The pieces that outlast seasons',
-                'heading_fr' => 'Les pièces qui survivent aux saisons',
-                'body' => 'Hand-embroidered adire, woven raffia and tailored wool — the heritage edit.',
-                'body_fr' => 'Adire brodé main, raphia tissé et laine tailleur — la sélection patrimoine.',
-                'image_url' => '/catalogue/editorial-a.webp',
-                'cta_label' => 'Discover',
-                'cta_label_fr' => 'Découvrir',
-                'cta_href' => '/collections/cultural-heritage',
+                'eyebrow' => 'Atelier Essentials',
+                'eyebrow_fr' => "Essentiels d'Atelier",
+                'heading' => 'The pieces you will keep for a decade',
+                'heading_fr' => 'Les pièces que vous garderez dix ans',
+                'body' => 'Precise tailoring in honest fabric — the quiet backbone of the OSSZ wardrobe.',
+                'body_fr' => 'Un tailleur précis dans une étoffe honnête — la colonne vertébrale discrète du vestiaire OSSZ.',
+                'image_url' => '/catalogue/editorial-b.jpg',
+                'cta_label' => 'Shop essentials',
+                'cta_label_fr' => 'Voir les essentiels',
+                'cta_href' => '/collections/atelier-essentials',
                 'is_published' => true,
             ]
         );
         HomeBlock::updateOrCreate(
             ['type' => 'quote', 'sort_order' => 2],
             [
-                'eyebrow' => 'By reservation',
-                'eyebrow_fr' => 'Sur réservation',
-                'heading' => 'Private styling at the boutique',
-                'heading_fr' => 'Styling privé à la boutique',
-                'body' => 'One hour with a stylist, eight measurements kept on file, alterations included.',
-                'body_fr' => 'Une heure avec un styliste, huit mesures conservées, retouches incluses.',
+                'eyebrow' => 'Our promise',
+                'eyebrow_fr' => 'Notre promesse',
+                'heading' => 'Fitted in person, wherever you are',
+                'heading_fr' => 'Essayée en personne, où que vous soyez',
+                'body' => 'Book a private styling appointment in Akwa, or let our concierge guide you online.',
+                'body_fr' => 'Réservez un rendez-vous de style privé à notre boutique Ange Raphael, ou laissez notre concierge vous guider en ligne.',
+                'image_url' => '/catalogue/amber-heritage-look-3.jpg',
                 'cta_label' => 'Book an appointment',
                 'cta_label_fr' => 'Prendre rendez-vous',
                 'cta_href' => '/appointments',
@@ -220,30 +384,51 @@ class DatabaseSeeder extends Seeder
             Faq::updateOrCreate(['question' => $faq['question']], $faq);
         }
 
-        // ── Journal ────────────────────────────────────────────────────
-        JournalPost::updateOrCreate(
-            ['slug' => 'notes-from-the-atelier'],
+        // ── Journal — the three live articles, bilingual, with covers ──
+        $journal = [
             [
-                'title' => 'Notes from the atelier',
-                'title_fr' => 'Notes de l\'atelier',
-                'excerpt' => 'What a week of cutting, dyeing and fitting looks like on Ange Raphael street.',
-                'excerpt_fr' => 'Une semaine de coupe, de teinture et d\'essayages rue Ange Raphael.',
-                'body' => "Monday begins with the adire bath.\nOur indigo vats are kept alive from week to week, and the depth of the blue tells you the mood of the season...\n\nEvery piece leaves the atelier pressed, bagged and signed by the hand that finished it.",
-                'body_fr' => "Lundi commence par le bain d'adire.\nNos cuves d'indigo se gardent de semaine en semaine, et la profondeur du bleu annonce l'humeur de la saison...\n\nChaque pièce quitte l'atelier repassée, ensachée et signée par la main qui l'a finie.",
-                'author_name' => 'OSSZ Studio',
-                'status' => 'published',
-                'published_at' => now(),
-            ]
-        );
+                'slug' => 'inside-the-akwa-atelier',
+                'title' => 'Inside our Ange Raphael atelier', 'title_fr' => 'Dans notre atelier Ange Raphael',
+                'excerpt' => 'Four tailors, one long table, and the patience that a hand-rolled hem demands.',
+                'excerpt_fr' => "Quatre tailleurs, une longue table, et la patience qu'exige un ourlet roulé main.",
+                'body' => "Our atelier is at Ange Raphael in Douala.\n\nEvery OSSZ piece begins on a long shared table where four tailors work in a rhythm they set themselves. A silk hem is rolled by hand — roughly forty minutes of work that most people will never notice, and that everyone feels when the dress moves.\n\nWe keep production small on purpose. A style is cut in a run of twenty, sometimes thirty, and when it is finished it is finished.",
+                'body_fr' => "Notre atelier se trouve à Ange Raphael, à Douala.\n\nChaque pièce OSSZ commence sur une longue table partagée où quatre tailleurs travaillent au rythme qu'ils fixent eux-mêmes. Un ourlet de soie est roulé à la main — environ quarante minutes de travail que presque personne ne remarquera, et que tout le monde ressent lorsque la robe bouge.\n\nNous gardons volontairement de petites séries. Un modèle est coupé en vingt, parfois trente exemplaires, et lorsqu'il est terminé, il est terminé.",
+                'cover_image' => '/catalogue/journal-atelier.png',
+            ],
+            [
+                'slug' => 'how-to-wear-silk-in-the-humidity',
+                'title' => 'How to wear silk in the humidity', 'title_fr' => "Porter la soie sous l'humidité",
+                'excerpt' => 'Douala is warm and wet for much of the year. Silk still belongs here — with a little care.',
+                'excerpt_fr' => "Douala est chaude et humide une bonne partie de l'année. La soie y a toute sa place — avec un peu de soin.",
+                'body' => "The trick is weight and cut, not avoidance.\n\nChoose a bias cut that falls away from the body rather than clinging to it. Keep beading for the evening, when the air cools. And air a silk piece overnight before returning it to the wardrobe — never fold it damp.\n\nOur concierge can advise on fabric weight for any piece; simply ask.",
+                'body_fr' => "Tout est affaire de poids et de coupe, non d'évitement.\n\nChoisissez une coupe en biais qui s'écarte du corps plutôt qu'elle ne s'y colle. Réservez le perlage au soir, quand l'air se rafraîchit. Et aérez une pièce en soie toute une nuit avant de la ranger — ne la pliez jamais humide.\n\nNotre concierge peut vous conseiller sur le grammage de n'importe quelle pièce ; il suffit de demander.",
+                'cover_image' => '/catalogue/journal-silk-humidity.jpg',
+            ],
+            [
+                'slug' => 'a-guide-to-your-first-fitting',
+                'title' => 'A guide to your first fitting', 'title_fr' => 'Guide de votre premier essayage',
+                'excerpt' => 'What to bring, what to expect, and why we take forty minutes rather than ten.',
+                'excerpt_fr' => 'Quoi apporter, à quoi s\'attendre, et pourquoi nous prenons quarante minutes plutôt que dix.',
+                'body' => "A first fitting at OSSZ takes about forty minutes.\n\nBring the shoes you intend to wear, and, if you can, a photograph of the occasion or setting. We will take eight measurements, discuss ease and movement, and agree a delivery date before you leave.\n\nAlterations on OSSZ pieces are complimentary within thirty days of purchase.",
+                'body_fr' => "Un premier essayage chez OSSZ dure environ quarante minutes.\n\nApportez les chaussures que vous comptez porter et, si possible, une photographie de l'occasion ou du lieu. Nous prendrons huit mesures, discuterons de l'aisance et du mouvement, et conviendrons d'une date de livraison avant votre départ.\n\nLes retouches sur les pièces OSSZ sont offertes dans les trente jours suivant l'achat.",
+                'cover_image' => '/catalogue/journal-first-fitting.png',
+            ],
+        ];
+        foreach ($journal as $post) {
+            JournalPost::updateOrCreate(
+                ['slug' => $post['slug']],
+                $post + ['author_name' => 'OSSZ Studio', 'status' => 'published', 'published_at' => now()]
+            );
+        }
 
-        // ── Lookbook ───────────────────────────────────────────────────
+        // ── Lookbook — the two live editorial slides ───────────────────
         LookbookItem::updateOrCreate(
-            ['image_url' => '/catalogue/editorial-a.webp', 'sort_order' => 0],
-            ['title' => 'Heritage in motion', 'caption' => 'The heritage edit, worn in Douala light.', 'caption_fr' => 'La sélection patrimoine, portée dans la lumière de Douala.', 'media_type' => 'image']
+            ['image_url' => '/catalogue/midnight-column-2.jpg', 'sort_order' => 0],
+            ['title' => 'Midnight Column', 'caption' => 'Midnight Column', 'caption_fr' => 'Midnight Column', 'media_type' => 'image', 'product_slug' => 'midnight-column-dress']
         );
         LookbookItem::updateOrCreate(
-            ['image_url' => '/catalogue/editorial-b.webp', 'sort_order' => 1],
-            ['title' => 'Evening hour', 'caption' => 'Silk, gold and midnight blue for the evening hour.', 'caption_fr' => 'Soie, or et bleu minuit pour l\'heure du soir.', 'media_type' => 'image']
+            ['image_url' => '/catalogue/editorial-a.jpg', 'sort_order' => 1],
+            ['title' => 'In the atelier', 'caption' => 'In the atelier', 'caption_fr' => 'Dans l\'atelier', 'media_type' => 'image', 'product_slug' => '']
         );
 
         // ── Welcome coupon ─────────────────────────────────────────────

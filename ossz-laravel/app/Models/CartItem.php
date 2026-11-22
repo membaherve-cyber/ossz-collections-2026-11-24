@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class CartItem extends Model
 {
+
+    // Schema has created_at only.
+    public const CREATED_AT = null;
+    public const UPDATED_AT = null;
+
     protected $fillable = ['cart_id', 'variant_id', 'quantity'];
 
     protected $casts = ['quantity' => 'integer'];
