@@ -34,3 +34,22 @@ yarn-error.log*
 
 .vercel
 ossz-laravel/ - Copy.env
+
+# runtime database (PGlite data) — never commit binaries
+/db/
+
+# mini-service dependencies & logs
+mini-services/*/node_modules/
+mini-services/*.log
+mini-services/*/service.log
+mini-services/*/*.log
+
+# logs, artifacts & workspace tooling
+*.log
+/tool-results/
+/.zscripts/
+/skills/
+preview-*.png
+
+# large binaries
+*.zip
