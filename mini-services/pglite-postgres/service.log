@@ -1,0 +1,3 @@
+[pglite-postgres] PostgreSQL 18 (PGlite) ready on 127.0.0.1:5432
+[pglite-postgres] data dir: /home/z/my-project/db/pglite-data
+[pglite-postgres] connect with: postgresql://postgres:postgres@127.0.0.1:5432/app_db

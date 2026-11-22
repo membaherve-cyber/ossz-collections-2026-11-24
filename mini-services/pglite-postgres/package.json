@@ -1,0 +1,15 @@
+{
+  "name": "ossz-pglite-postgres",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Embedded PostgreSQL (PGlite) exposed over the standard Postgres wire protocol on 127.0.0.1:5432 so the OSSZ Collections app, Drizzle ORM and seed scripts can connect with the regular `pg` driver.",
+  "type": "module",
+  "scripts": {
+    "dev": "bun index.mjs",
+    "start": "bun index.mjs"
+  },
+  "dependencies": {
+    "@electric-sql/pglite": "0.5.17",
+    "@electric-sql/pglite-socket": "0.2.20"
+  }
+}

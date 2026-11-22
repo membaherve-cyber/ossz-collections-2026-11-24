@@ -1,2 +1,36 @@
-skills/
-node_modules/
+# dependencies
+/node_modules
+/.pnp
+.pnp.*
+
+# next.js
+/.next/
+/out/
+next-env.d.ts
+
+# production
+/build
+
+# env — never commit secrets
+.env
+.env*.local
+.env.production
+
+# misc
+.DS_Store
+*.pem
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+/coverage
+*.tsbuildinfo
+
+# user uploads — never commit
+/public/uploads/
+
+# preview tooling
+.freebuff/
+.php-lint/
+
+.vercel
+ossz-laravel/ - Copy.env
