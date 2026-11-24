@@ -2,8 +2,8 @@ import Image from "next/image";
 import { desc } from "drizzle-orm";
 import { db } from "@/db";
 import { media } from "@/db/schema";
-import { addMediaAction, deleteMediaAction } from "@/lib/admin-actions";
 import { ActionForm } from "@/components/action-form";
+import { ApiForm } from "@/components/api-form";
 
 import { guardPage } from "@/lib/guard";
 
@@ -20,7 +20,7 @@ export default async function MediaLibrary() {
         collection or journal entry.
       </p>
 
-      <ActionForm action={addMediaAction} submitLabel="Add photo" className="card mt-6 grid gap-4 p-6 sm:grid-cols-3">
+      <ActionForm action="addMediaAction" submitLabel="Add photo" className="card mt-6 grid gap-4 p-6 sm:grid-cols-3">
         <div className="sm:col-span-3"><label className="label" htmlFor="url">Photo link (https://…)</label><input id="url" name="url" required className="field" /></div>
         <div className="sm:col-span-2"><label className="label" htmlFor="altText">Describe the photo (for accessibility)</label><input id="altText" name="altText" className="field" /></div>
         <div><label className="label" htmlFor="tags">Tags</label><input id="tags" name="tags" className="field" placeholder="campaign, silk" /></div>
@@ -35,10 +35,10 @@ export default async function MediaLibrary() {
             <figcaption className="space-y-1 p-3 text-xs">
               <p className="truncate text-muted">{item.tags || "untagged"}</p>
               <input readOnly value={item.url} className="field px-2 py-1 text-[0.65rem]" aria-label="Photo link" />
-              <form action={deleteMediaAction}>
+              <ApiForm action="deleteMediaAction">
                 <input type="hidden" name="id" value={item.id} />
                 <button className="text-red-600 link-underline">Remove</button>
-              </form>
+              </ApiForm>
             </figcaption>
           </figure>
         ))}

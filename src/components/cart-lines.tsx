@@ -4,9 +4,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { removeCartLine, updateCartLine } from "@/lib/actions";
+import { callAction } from "@/lib/api-actions";
 import type { CartLine } from "@/lib/store";
 import { formatXAF } from "@/lib/utils";
+
+const updateCartLine = (itemId: number, quantity: number) =>
+  callAction<{ ok: boolean; message: string }>("updateCartLine", itemId, quantity);
+const removeCartLine = (itemId: number) =>
+  callAction<{ ok: boolean; message: string }>("removeCartLine", itemId);
 
 export function CartLines({ lines }: { lines: CartLine[] }) {
   const [pending, start] = useTransition();

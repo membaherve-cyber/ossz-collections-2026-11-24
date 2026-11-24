@@ -364,6 +364,7 @@ CREATE TABLE public.orders (
     delivery_method text DEFAULT 'douala_local'::text NOT NULL,
     delivery_zone text DEFAULT ''::text NOT NULL,
     shipping_snapshot jsonb,
+    payment_proof_url text,
     notes text DEFAULT ''::text NOT NULL,
     created_at timestamp with time zone DEFAULT now() NOT NULL,
     updated_at timestamp with time zone DEFAULT now() NOT NULL

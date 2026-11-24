@@ -2,8 +2,8 @@ import Image from "next/image";
 import { asc } from "drizzle-orm";
 import { db } from "@/db";
 import { homeBlocks } from "@/db/schema";
-import { deleteHomeBlockAction, saveHomeBlockAction } from "@/lib/admin-actions";
 import { ActionForm } from "@/components/action-form";
+import { ApiForm } from "@/components/api-form";
 
 import { guardPage } from "@/lib/guard";
 
@@ -22,7 +22,7 @@ export default async function HomepageBuilder() {
 
       <details className="card mt-6 p-6">
         <summary className="cursor-pointer text-sm font-medium">+ Add a block</summary>
-        <ActionForm action={saveHomeBlockAction} submitLabel="Add block" className="mt-5 grid gap-4 sm:grid-cols-2">
+        <ActionForm action="saveHomeBlockAction" submitLabel="Add block" className="mt-5 grid gap-4 sm:grid-cols-2">
           <div>
             <label className="label" htmlFor="type">Block type</label>
             <select id="type" name="type" className="field">
@@ -54,7 +54,7 @@ export default async function HomepageBuilder() {
                 <span className="block text-xs text-muted">{block.type} · position {block.sortOrder} · {block.isPublished ? "live" : "hidden"}</span>
               </span>
             </summary>
-            <ActionForm action={saveHomeBlockAction} submitLabel="Save block" className="mt-4 grid gap-4 sm:grid-cols-2">
+            <ActionForm action="saveHomeBlockAction" submitLabel="Save block" className="mt-4 grid gap-4 sm:grid-cols-2">
               <input type="hidden" name="id" value={block.id} />
               <input type="hidden" name="type" value={block.type} />
               <div><label className="label" htmlFor={`e${block.id}`}>Small label</label><input id={`e${block.id}`} name="eyebrow" defaultValue={block.eyebrow} className="field" /></div>
@@ -66,10 +66,10 @@ export default async function HomepageBuilder() {
               <div><label className="label" htmlFor={`ch${block.id}`}>Button link</label><input id={`ch${block.id}`} name="ctaHref" defaultValue={block.ctaHref} className="field" /></div>
               <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isPublished" defaultChecked={block.isPublished} /> Show on the homepage</label>
             </ActionForm>
-            <form action={deleteHomeBlockAction} className="mt-3">
+            <ApiForm action="deleteHomeBlockAction" className="mt-3">
               <input type="hidden" name="id" value={block.id} />
               <button className="text-xs text-red-600 link-underline">Remove this block</button>
-            </form>
+            </ApiForm>
           </details>
         ))}
       </div>

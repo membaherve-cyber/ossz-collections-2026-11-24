@@ -3,6 +3,18 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   poweredByHeader: false,
   compress: true,
+  // The preview gateway rewrites `x-forwarded-host`, so Next.js aborts every
+  // Server Action as CSRF ("Invalid Server Actions request"). Client
+  // mutations therefore travel through /api/actions/[action] (see
+  // src/lib/api-actions.ts), and these entries are a safety net for any
+  // Server Action traffic that remains (e.g. RSC submissions). Wildcards
+  // cover per-session preview hostnames.
+  allowedDevOrigins: ["*.space-z.ai", "*.fcapp.run", "localhost", "127.0.0.1"],
+  experimental: {
+    serverActions: {
+      allowedOrigins: ["*.space-z.ai", "*.fcapp.run", "localhost:3000"],
+    },
+  },
   // Vercel serverless functions include only traced files. The auto-setup logic
   // needs the seed scripts, schema SQL and catalogue images available at
   // runtime; include them explicitly so an empty production DB can self-heal.

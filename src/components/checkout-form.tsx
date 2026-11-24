@@ -2,9 +2,11 @@
 
 import Link from "next/link";
 import { useActionState, useState } from "react";
-import { createPendingOrderAction, type ActionState } from "@/lib/payment-actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
 import { formatXAF } from "@/lib/utils";
 import { t, type Locale } from "@/lib/i18n";
+
+const createPendingOrderAction = formAction("createPendingOrderAction");
 
 const initial: ActionState = { ok: false, message: "" };
 

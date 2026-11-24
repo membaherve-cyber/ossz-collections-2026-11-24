@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { newsletterAction, type ActionState } from "@/lib/actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
+
+const newsletterAction = formAction("newsletterAction");
 
 const initial: ActionState = { ok: false, message: "" };
 

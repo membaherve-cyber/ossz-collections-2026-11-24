@@ -4,9 +4,13 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { addToCart } from "@/lib/actions";
+import { callAction } from "@/lib/api-actions";
 import { formatXAF } from "@/lib/utils";
 import { t, type Locale } from "@/lib/i18n";
+
+async function addToCart(variantId: number, quantity: number) {
+  return callAction<{ ok: boolean; message: string }>("addToCart", variantId, quantity);
+}
 
 type QuickViewData = {
   name: string;

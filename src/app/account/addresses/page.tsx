@@ -2,8 +2,8 @@ import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { addresses } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { deleteAddressAction } from "@/lib/actions";
 import { AddressForm } from "@/components/account-forms";
+import { ApiForm } from "@/components/api-form";
 
 export const dynamic = "force-dynamic";
 
@@ -25,10 +25,10 @@ export default async function AddressesPage() {
             <p className="text-ink-soft">{address.street}</p>
             <p className="text-ink-soft">{address.area}, {address.city}</p>
             <p className="text-muted">{address.phone}</p>
-            <form action={deleteAddressAction} className="mt-3">
+            <ApiForm action="deleteAddressAction" className="mt-3">
               <input type="hidden" name="id" value={address.id} />
               <button className="text-xs text-red-600 link-underline">Remove</button>
-            </form>
+            </ApiForm>
           </article>
         ))}
       </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/auth";
-import { logoutAction } from "@/lib/actions";
+import { LogoutButton } from "@/components/api-form";
 
 const LINKS = [
   ["/account", "Overview"],
@@ -32,9 +32,9 @@ export default async function AccountLayout({ children }: { children: ReactNode 
             <Link href="/admin" className="border-b border-line py-2 text-accent">Back office →</Link>
           ) : null}
         </nav>
-        <form action={logoutAction} className="mt-6">
-          <button className="btn btn-ghost px-0 text-xs">Sign out</button>
-        </form>
+        <div className="mt-6">
+          <LogoutButton className="btn btn-ghost px-0 text-xs" />
+        </div>
       </aside>
       <section>{children}</section>
     </div>

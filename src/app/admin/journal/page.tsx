@@ -1,7 +1,7 @@
 import { desc } from "drizzle-orm";
 import { db } from "@/db";
 import { journalPosts } from "@/db/schema";
-import { saveJournalAction } from "@/lib/admin-actions";
+
 import { ActionForm } from "@/components/action-form";
 import { formatDate } from "@/lib/utils";
 
@@ -19,7 +19,7 @@ export default async function AdminJournal() {
 
       <details className="card mt-6 p-6">
         <summary className="cursor-pointer text-sm font-medium">+ New entry</summary>
-        <ActionForm action={saveJournalAction} submitLabel="Save entry" className="mt-5 grid gap-4">
+        <ActionForm action="saveJournalAction" submitLabel="Save entry" className="mt-5 grid gap-4">
           <div><label className="label" htmlFor="title">Title</label><input id="title" name="title" required className="field" /></div>
           <div><label className="label" htmlFor="excerpt">Short summary</label><input id="excerpt" name="excerpt" className="field" /></div>
           <div><label className="label" htmlFor="coverImage">Cover photo link</label><input id="coverImage" name="coverImage" className="field" /></div>
@@ -40,7 +40,7 @@ export default async function AdminJournal() {
             <summary className="cursor-pointer text-sm font-medium">
               {post.title} <span className="text-xs text-muted">· {post.status} · {formatDate(post.publishedAt ?? post.createdAt)}</span>
             </summary>
-            <ActionForm action={saveJournalAction} submitLabel="Save" className="mt-4 grid gap-4">
+            <ActionForm action="saveJournalAction" submitLabel="Save" className="mt-4 grid gap-4">
               <input type="hidden" name="id" value={post.id} />
               <input type="hidden" name="slug" value={post.slug} />
               <div><label className="label" htmlFor={`t${post.id}`}>Title</label><input id={`t${post.id}`} name="title" defaultValue={post.title} className="field" /></div>

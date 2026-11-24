@@ -2,8 +2,8 @@ import Link from "next/link";
 import { desc, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { orders } from "@/db/schema";
-import { trackOrderAction, updateOrderStatusAction } from "@/lib/admin-actions";
 import { StatusPill } from "@/components/ui";
+import { ApiForm } from "@/components/api-form";
 import { DELIVERY_LABELS, ORDER_STATUSES, PAYMENT_LABELS, STATUS_LABELS, formatDate, formatXAF } from "@/lib/utils";
 
 import { guardPage } from "@/lib/guard";
@@ -34,7 +34,7 @@ export default async function OrdersQueue({
 
       <div className="card mt-6 p-5">
         <p className="eyebrow">Quick track — send status update</p>
-        <form action={trackOrderAction} className="mt-3 flex flex-wrap items-end gap-3">
+        <ApiForm action="trackOrderAction" className="mt-3 flex flex-wrap items-end gap-3">
           <div className="flex-1 min-w-[180px]">
             <label className="label" htmlFor="qt-order">Order number</label>
             <input id="qt-order" name="orderNumber" required placeholder="OSZ-XXXX" className="field" />
@@ -52,7 +52,7 @@ export default async function OrdersQueue({
             </select>
           </div>
           <button className="btn btn-primary btn-sm">Send</button>
-        </form>
+        </ApiForm>
         <p className="mt-2 text-xs text-muted">The client receives a WhatsApp message and email with the updated status.</p>
       </div>
 
@@ -85,13 +85,13 @@ export default async function OrdersQueue({
                 <td>{formatXAF(order.total)}</td>
                 <td><StatusPill status={order.status} /></td>
                 <td>
-                  <form action={updateOrderStatusAction} className="flex items-center gap-1">
+                  <ApiForm action="updateOrderStatusAction" className="flex items-center gap-1">
                     <input type="hidden" name="id" value={order.id} />
                     <select name="status" defaultValue={order.status} className="field px-2 py-1 text-xs">
                       {ORDER_STATUSES.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                     </select>
                     <button className="btn btn-ghost btn-sm">Update</button>
-                  </form>
+                  </ApiForm>
                 </td>
               </tr>
             ))}

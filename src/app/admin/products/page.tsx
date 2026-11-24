@@ -3,8 +3,8 @@ import Image from "next/image";
 import { asc, desc, eq, sql } from "drizzle-orm";
 import { db } from "@/db";
 import { categories, collections, productImages, productVariants, products } from "@/db/schema";
-import { deleteProductAction, saveProductAction } from "@/lib/admin-actions";
 import { ActionForm } from "@/components/action-form";
+import { ApiForm } from "@/components/api-form";
 import { formatXAF } from "@/lib/utils";
 
 import { guardPage } from "@/lib/guard";
@@ -32,7 +32,7 @@ export default async function AdminProducts() {
 
       <details className="card mt-6 p-6" open={rows.length === 0}>
         <summary className="cursor-pointer text-sm font-medium">+ Add a new piece</summary>
-        <ActionForm action={saveProductAction} submitLabel="Publish this piece" className="mt-5 grid gap-4 sm:grid-cols-2">
+        <ActionForm action="saveProductAction" submitLabel="Publish this piece" className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
             <label className="label" htmlFor="name">Name of the piece</label>
             <input id="name" name="name" required className="field" placeholder="Mbanga Silk Gown" />
@@ -114,10 +114,10 @@ export default async function AdminProducts() {
                   <td>{Number(total?.total ?? 0)}</td>
                   <td className="text-xs">{product.isPublished ? "Live" : "Draft"}{product.isFeatured ? " · Featured" : ""}</td>
                   <td>
-                    <form action={deleteProductAction}>
+                    <ApiForm action="deleteProductAction">
                       <input type="hidden" name="id" value={product.id} />
                       <button className="text-xs text-red-600 link-underline">Delete</button>
-                    </form>
+                    </ApiForm>
                   </td>
                 </tr>
               );

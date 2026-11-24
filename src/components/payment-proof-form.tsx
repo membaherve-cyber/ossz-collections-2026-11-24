@@ -1,8 +1,10 @@
 "use client";
 
 import { useRef, useState, useActionState } from "react";
-import { finalizeOrderAction, type ActionState } from "@/lib/payment-actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
 import { formatXAF } from "@/lib/utils";
+
+const finalizeOrderAction = formAction("finalizeOrderAction");
 
 const initial: ActionState = { ok: false, message: "" };
 

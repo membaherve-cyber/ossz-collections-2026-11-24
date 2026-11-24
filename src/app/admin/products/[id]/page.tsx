@@ -3,8 +3,8 @@ import { asc, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { categories, collections, productImages, productVariants, products } from "@/db/schema";
-import { saveProductAction, updateStockAction } from "@/lib/admin-actions";
 import { ActionForm } from "@/components/action-form";
+import { ApiForm } from "@/components/api-form";
 
 import { guardPage } from "@/lib/guard";
 
@@ -27,7 +27,7 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
       <h1 className="display mt-3 text-3xl">{product.name}</h1>
       <Link href={`/product/${product.slug}`} className="text-xs text-accent link-underline">Preview on the live site →</Link>
 
-      <ActionForm action={saveProductAction} submitLabel="Save changes" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
+      <ActionForm action="saveProductAction" submitLabel="Save changes" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
         <input type="hidden" name="id" value={product.id} />
         <input type="hidden" name="slug" value={product.slug} />
         <div className="sm:col-span-2">
@@ -91,14 +91,14 @@ export default async function EditProduct({ params }: { params: Promise<{ id: st
       <h2 className="display mt-10 text-2xl">Stock by variant</h2>
       <div className="mt-4 grid gap-2 sm:grid-cols-2">
         {variants.map((v) => (
-          <form key={v.id} action={updateStockAction} className="card flex items-center justify-between gap-3 p-3 text-sm">
+          <ApiForm key={v.id} action="updateStockAction" className="card flex items-center justify-between gap-3 p-3 text-sm">
             <span>{v.size} · {v.colour}</span>
             <span className="flex items-center gap-2">
               <input type="hidden" name="variantId" value={v.id} />
               <input name="stockQty" type="number" min={0} defaultValue={v.stockQty} className="field w-20 px-2 py-1" aria-label={`Stock ${v.size} ${v.colour}`} />
               <button className="btn btn-ghost btn-sm">Save</button>
             </span>
-          </form>
+          </ApiForm>
         ))}
       </div>
     </div>

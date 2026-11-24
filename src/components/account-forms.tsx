@@ -1,12 +1,23 @@
 "use client";
 
+import { useEffect } from "react";
 import { useActionState } from "react";
-import { saveAddressAction, updateProfileAction, type ActionState } from "@/lib/actions";
+import { useRouter } from "next/navigation";
+import { formAction, type ActionState } from "@/lib/api-actions";
+
+const saveAddressAction = formAction("saveAddressAction");
+const updateProfileAction = formAction("updateProfileAction");
 
 const initial: ActionState = { ok: false, message: "" };
 
 export function AddressForm() {
   const [state, action, pending] = useActionState(saveAddressAction, initial);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.ok && !state.redirectTo) router.refresh();
+  }, [state, router]);
+
   return (
     <form action={action} className="card grid gap-4 p-6 sm:grid-cols-2">
       <div>
@@ -49,6 +60,12 @@ export function AddressForm() {
 
 export function ProfileForm({ fullName, phone, email }: { fullName: string; phone: string; email: string }) {
   const [state, action, pending] = useActionState(updateProfileAction, initial);
+  const router = useRouter();
+
+  useEffect(() => {
+    if (state.ok && !state.redirectTo) router.refresh();
+  }, [state, router]);
+
   return (
     <form action={action} className="card grid gap-4 p-6 sm:grid-cols-2">
       <div>

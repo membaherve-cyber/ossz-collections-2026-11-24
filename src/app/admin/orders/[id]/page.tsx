@@ -3,8 +3,8 @@ import { eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { db } from "@/db";
 import { orderItems, orders } from "@/db/schema";
-import { updateOrderStatusAction, updatePaymentStatusAction } from "@/lib/admin-actions";
 import { StatusPill } from "@/components/ui";
+import { ApiForm } from "@/components/api-form";
 import { DELIVERY_LABELS, ORDER_STATUSES, PAYMENT_LABELS, STATUS_LABELS, formatDateTime, formatXAF } from "@/lib/utils";
 
 import { guardPage } from "@/lib/guard";
@@ -80,15 +80,15 @@ export default async function AdminOrderDetail({ params }: { params: Promise<{ i
 
           <div className="card p-6">
             <p className="eyebrow">Fulfilment</p>
-            <form action={updateOrderStatusAction} className="mt-3 flex gap-2">
+            <ApiForm action="updateOrderStatusAction" className="mt-3 flex gap-2">
               <input type="hidden" name="id" value={order.id} />
               <select name="status" defaultValue={order.status} className="field">
                 {ORDER_STATUSES.map((s) => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
               </select>
               <button className="btn btn-primary btn-sm">Update</button>
-            </form>
+            </ApiForm>
             <p className="mt-5 eyebrow">Payment — {PAYMENT_LABELS[order.paymentMethod]}</p>
-            <form action={updatePaymentStatusAction} className="mt-2 flex gap-2">
+            <ApiForm action="updatePaymentStatusAction" className="mt-2 flex gap-2">
               <input type="hidden" name="id" value={order.id} />
               <select name="paymentStatus" defaultValue={order.paymentStatus} className="field">
                 <option value="pending">Pending</option>
@@ -96,7 +96,7 @@ export default async function AdminOrderDetail({ params }: { params: Promise<{ i
                 <option value="refunded">Refunded</option>
               </select>
               <button className="btn btn-secondary btn-sm">Save</button>
-            </form>
+            </ApiForm>
           </div>
         </div>
       </div>

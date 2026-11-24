@@ -2,10 +2,17 @@
 
 import { useMemo, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { addToCart, toggleWishlist } from "@/lib/actions";
+import { callAction } from "@/lib/api-actions";
 import { formatXAF } from "@/lib/utils";
 import { t, type Locale } from "@/lib/i18n";
 import dynamic from "next/dynamic";
+
+async function addToCart(variantId: number, quantity: number) {
+  return callAction<{ ok: boolean; message: string }>("addToCart", variantId, quantity);
+}
+async function toggleWishlist(productId: number) {
+  return callAction<{ ok: boolean; message: string }>("toggleWishlist", productId);
+}
 
 const BuyNowModal = dynamic(() => import("@/components/buy-now-modal").then((m) => m.BuyNowModal));
 

@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState } from "react";
-import { contactAction, type ActionState } from "@/lib/actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
+
+const contactAction = formAction("contactAction");
 
 const initial: ActionState = { ok: false, message: "" };
 

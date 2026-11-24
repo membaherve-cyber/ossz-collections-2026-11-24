@@ -1,6 +1,6 @@
 import { db } from "@/db";
 import { collections } from "@/db/schema";
-import { saveCollectionAction } from "@/lib/admin-actions";
+
 import { ActionForm } from "@/components/action-form";
 
 import { guardPage } from "@/lib/guard";
@@ -17,7 +17,7 @@ export default async function AdminCollections() {
 
       <details className="card mt-6 p-6">
         <summary className="cursor-pointer text-sm font-medium">+ New collection</summary>
-        <ActionForm action={saveCollectionAction} submitLabel="Create collection" className="mt-5 grid gap-4 sm:grid-cols-2">
+        <ActionForm action="saveCollectionAction" submitLabel="Create collection" className="mt-5 grid gap-4 sm:grid-cols-2">
           <div><label className="label" htmlFor="name">Name</label><input id="name" name="name" required className="field" /></div>
           <div><label className="label" htmlFor="season">Season label</label><input id="season" name="season" className="field" placeholder="Season 05" /></div>
           <div className="sm:col-span-2"><label className="label" htmlFor="coverImage">Cover photo link</label><input id="coverImage" name="coverImage" className="field" /></div>
@@ -33,7 +33,7 @@ export default async function AdminCollections() {
             <summary className="cursor-pointer text-sm font-medium">
               {collection.name} <span className="text-xs text-muted">/{collection.slug} · {collection.isPublished ? "live" : "hidden"}</span>
             </summary>
-            <ActionForm action={saveCollectionAction} submitLabel="Save" className="mt-4 grid gap-4 sm:grid-cols-2">
+            <ActionForm action="saveCollectionAction" submitLabel="Save" className="mt-4 grid gap-4 sm:grid-cols-2">
               <input type="hidden" name="id" value={collection.id} />
               <input type="hidden" name="slug" value={collection.slug} />
               <div><label className="label" htmlFor={`n${collection.id}`}>Name</label><input id={`n${collection.id}`} name="name" defaultValue={collection.name} className="field" /></div>

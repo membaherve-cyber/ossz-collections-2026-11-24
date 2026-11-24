@@ -3,7 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { appointments } from "@/db/schema";
 import { getCurrentUser } from "@/lib/auth";
-import { cancelAppointmentAction } from "@/lib/actions";
+import { ApiForm } from "@/components/api-form";
 import { StatusPill, EmptyState } from "@/components/ui";
 import { formatDateTime } from "@/lib/utils";
 
@@ -39,10 +39,10 @@ export default async function AccountAppointments() {
               <div className="flex items-center gap-3">
                 <StatusPill status={a.status} />
                 {a.status !== "cancelled" && new Date(a.slotStart) > new Date() ? (
-                  <form action={cancelAppointmentAction}>
+                  <ApiForm action="cancelAppointmentAction">
                     <input type="hidden" name="id" value={a.id} />
                     <button className="text-xs text-red-600 link-underline">Cancel</button>
-                  </form>
+                  </ApiForm>
                 ) : null}
               </div>
             </li>

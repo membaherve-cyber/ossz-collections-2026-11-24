@@ -2,8 +2,8 @@ import Image from "next/image";
 import { asc } from "drizzle-orm";
 import { db } from "@/db";
 import { lookbookItems } from "@/db/schema";
-import { deleteLookAction, saveLookAction } from "@/lib/admin-actions";
 import { ActionForm } from "@/components/action-form";
+import { ApiForm } from "@/components/api-form";
 import { LookbookMediaUploader } from "@/components/lookbook-media-uploader";
 
 import { guardPage } from "@/lib/guard";
@@ -23,7 +23,7 @@ export default async function AdminLookbook() {
 
       <LookbookMediaUploader />
 
-      <ActionForm action={saveLookAction} submitLabel="Add look" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
+      <ActionForm action="saveLookAction" submitLabel="Add look" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
         <div><label className="label" htmlFor="title">Title</label><input id="title" name="title" className="field" placeholder="Look 07" /></div>
         <div><label className="label" htmlFor="sortOrder">Order</label><input id="sortOrder" name="sortOrder" type="number" defaultValue={looks.length} className="field" /></div>
         <div className="sm:col-span-2"><label className="label" htmlFor="imageUrl">Photo or video link</label><input id="imageUrl" name="imageUrl" required className="field" placeholder="/uploads/videos/look-abc123.mp4 or https://…" /></div>
@@ -55,10 +55,10 @@ export default async function AdminLookbook() {
             <figcaption className="p-3 text-xs">
               <p>{look.title}</p>
               <p className="text-muted">{look.caption}</p>
-              <form action={deleteLookAction} className="mt-2">
+              <ApiForm action="deleteLookAction" className="mt-2">
                 <input type="hidden" name="id" value={look.id} />
                 <button className="text-red-600 link-underline">Remove</button>
-              </form>
+              </ApiForm>
             </figcaption>
           </figure>
         ))}

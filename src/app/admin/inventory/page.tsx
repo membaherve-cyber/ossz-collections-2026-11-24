@@ -1,8 +1,8 @@
 import { asc, eq } from "drizzle-orm";
 import { db } from "@/db";
 import { productVariants, products } from "@/db/schema";
-import { updateStockAction } from "@/lib/admin-actions";
 import { formatXAF } from "@/lib/utils";
+import { ApiForm } from "@/components/api-form";
 
 import { guardPage } from "@/lib/guard";
 
@@ -43,7 +43,7 @@ export default async function InventoryPage() {
                   <td className="text-xs text-muted">{variant.sku}</td>
                   <td>{formatXAF(variant.priceOverride ?? product.basePrice)}</td>
                   <td>
-                    <form action={updateStockAction} className="flex items-center gap-2">
+                    <ApiForm action="updateStockAction" className="flex items-center gap-2">
                       <input type="hidden" name="variantId" value={variant.id} />
                       <input
                         name="stockQty"
@@ -55,7 +55,7 @@ export default async function InventoryPage() {
                       />
                       <button className="btn btn-ghost btn-sm">Save</button>
                       {isLow ? <span className="text-xs text-amber-700">low</span> : null}
-                    </form>
+                    </ApiForm>
                   </td>
                 </tr>
               );

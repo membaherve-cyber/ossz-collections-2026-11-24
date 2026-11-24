@@ -4,10 +4,15 @@ import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useEffect, useMemo, useRef, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { addToCart, inlineLoginAction, type ActionState } from "@/lib/actions";
+import { callAction, formAction, type ActionState } from "@/lib/api-actions";
 import type { CardVariant } from "@/lib/store";
 import { formatXAF } from "@/lib/utils";
 import { t, type Locale } from "@/lib/i18n";
+
+const inlineLoginAction = formAction("inlineLoginAction");
+async function addToCart(variantId: number, quantity: number) {
+  return callAction<{ ok: boolean; message: string }>("addToCart", variantId, quantity);
+}
 
 type Step = "configure" | "choose" | "login";
 

@@ -1,8 +1,8 @@
 import { asc } from "drizzle-orm";
 import { db } from "@/db";
 import { appointments } from "@/db/schema";
-import { setAppointmentStatusAction } from "@/lib/admin-actions";
 import { StatusPill } from "@/components/ui";
+import { ApiForm } from "@/components/api-form";
 import { formatDateTime } from "@/lib/utils";
 
 import { guardPage } from "@/lib/guard";
@@ -39,11 +39,11 @@ export default async function AdminAppointments() {
                   <div className="flex items-center gap-2">
                     <StatusPill status={a.status} />
                     {["confirmed", "completed", "cancelled"].map((status) => (
-                      <form action={setAppointmentStatusAction} key={status}>
+                      <ApiForm action="setAppointmentStatusAction" key={status}>
                         <input type="hidden" name="id" value={a.id} />
                         <input type="hidden" name="status" value={status} />
                         <button className="btn btn-ghost btn-sm capitalize">{status}</button>
-                      </form>
+                      </ApiForm>
                     ))}
                   </div>
                 </li>

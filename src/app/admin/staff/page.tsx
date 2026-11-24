@@ -1,7 +1,7 @@
 import { desc, ne } from "drizzle-orm";
 import { db } from "@/db";
 import { aiConversations, users } from "@/db/schema";
-import { saveStaffAction } from "@/lib/admin-actions";
+
 import { ActionForm } from "@/components/action-form";
 import { formatDateTime } from "@/lib/utils";
 
@@ -31,7 +31,7 @@ export default async function StaffPage() {
             </li>
           ))}
         </ul>
-        <ActionForm action={saveStaffAction} submitLabel="Save team member" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
+        <ActionForm action="saveStaffAction" submitLabel="Save team member" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
           <div><label className="label" htmlFor="fullName">Name</label><input id="fullName" name="fullName" className="field" /></div>
           <div><label className="label" htmlFor="email">Email</label><input id="email" name="email" type="email" required className="field" /></div>
           <div>

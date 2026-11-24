@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import {
-  completePasswordResetAction,
-  requestPasswordResetAction,
-  type ActionState,
-} from "@/lib/actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
+
+const requestPasswordResetAction = formAction("requestPasswordResetAction");
+const completePasswordResetAction = formAction("completePasswordResetAction");
 
 const initial: ActionState = { ok: false, message: "" };
 

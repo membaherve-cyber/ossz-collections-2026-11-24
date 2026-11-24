@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import { canEnterBackOffice, canFulfilOrders, canManageCatalogue, getCurrentUser, isAdmin } from "@/lib/auth";
-import { logoutAction } from "@/lib/actions";
 import { AdminBack } from "@/components/admin-back";
+import { LogoutButton } from "@/components/api-form";
 
 export const dynamic = "force-dynamic";
 
@@ -75,7 +75,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           </nav>
           <div className="mt-6 flex flex-col gap-2 text-xs">
             <Link href="/" className="text-muted link-underline">View the live site →</Link>
-            <form action={logoutAction}><button className="text-muted link-underline">Sign out</button></form>
+            <LogoutButton className="text-muted link-underline" />
           </div>
         </aside>
         <section className="min-w-0">

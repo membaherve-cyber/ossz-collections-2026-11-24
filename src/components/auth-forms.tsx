@@ -2,7 +2,12 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
-import { loginAction, registerAction, type ActionState } from "@/lib/actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
+
+// Submissions travel through /api/actions/[action] — Server Actions are
+// blocked behind the preview gateway.
+const loginAction = formAction("loginAction");
+const registerAction = formAction("registerAction");
 
 const initial: ActionState = { ok: false, message: "" };
 

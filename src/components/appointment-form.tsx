@@ -1,7 +1,9 @@
 "use client";
 
 import { useActionState, useState } from "react";
-import { bookAppointmentAction, type ActionState } from "@/lib/actions";
+import { formAction, type ActionState } from "@/lib/api-actions";
+
+const bookAppointmentAction = formAction("bookAppointmentAction");
 
 const initial: ActionState = { ok: false, message: "" };
 const SLOTS = ["09:00", "09:30", "10:00", "10:30", "11:00", "11:30", "12:00", "12:30", "13:00", "13:30", "14:00", "14:30", "15:00", "15:30", "16:00", "16:30", "17:00", "17:30"];

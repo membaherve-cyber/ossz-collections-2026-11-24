@@ -2,7 +2,7 @@ import { asc, desc } from "drizzle-orm";
 import { db } from "@/db";
 import { auditLog, deliveryZones, faqs } from "@/db/schema";
 import { getSettings } from "@/lib/store";
-import { saveFaqAction, saveSettingsAction, saveZoneAction } from "@/lib/admin-actions";
+
 import { ActionForm } from "@/components/action-form";
 import { formatDateTime, formatXAF } from "@/lib/utils";
 
@@ -26,7 +26,7 @@ export default async function SettingsPage() {
         <p className="mt-2 text-sm text-ink-soft">
           These details appear across the site and are what the OSSZ Concierge quotes to visitors.
         </p>
-        <ActionForm action={saveSettingsAction} submitLabel="Save settings" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
+        <ActionForm action="saveSettingsAction" submitLabel="Save settings" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
           <div><label className="label" htmlFor="whatsapp_number">WhatsApp number (hand-off)</label><input id="whatsapp_number" name="whatsapp_number" defaultValue={settings.whatsapp_number} className="field" /></div>
           <div><label className="label" htmlFor="contact_email">Contact email</label><input id="contact_email" name="contact_email" defaultValue={settings.contact_email} className="field" /></div>
           <div className="sm:col-span-2"><label className="label" htmlFor="store_address">Store address</label><input id="store_address" name="store_address" defaultValue={settings.store_address} className="field" /></div>
@@ -67,7 +67,7 @@ export default async function SettingsPage() {
             ))}
           </tbody>
         </table>
-        <ActionForm action={saveZoneAction} submitLabel="Add zone" compact className="card mt-4 grid gap-4 p-5 sm:grid-cols-4">
+        <ActionForm action="saveZoneAction" submitLabel="Add zone" compact className="card mt-4 grid gap-4 p-5 sm:grid-cols-4">
           <div><label className="label" htmlFor="zname">Zone name</label><input id="zname" name="name" className="field" /></div>
           <div>
             <label className="label" htmlFor="zmethod">Method</label>
@@ -91,7 +91,7 @@ export default async function SettingsPage() {
             </li>
           ))}
         </ul>
-        <ActionForm action={saveFaqAction} submitLabel="Add FAQ" compact className="card mt-4 grid gap-4 p-5">
+        <ActionForm action="saveFaqAction" submitLabel="Add FAQ" compact className="card mt-4 grid gap-4 p-5">
           <div className="grid gap-4 sm:grid-cols-2">
             <div><label className="label" htmlFor="fcat">Category</label><input id="fcat" name="category" defaultValue="General" className="field" /></div>
             <div><label className="label" htmlFor="fsort">Order</label><input id="fsort" name="sortOrder" type="number" defaultValue={faqRows.length} className="field" /></div>

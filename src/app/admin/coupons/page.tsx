@@ -1,7 +1,7 @@
 import { db } from "@/db";
 import { coupons } from "@/db/schema";
-import { saveCouponAction, toggleCouponAction } from "@/lib/admin-actions";
 import { ActionForm } from "@/components/action-form";
+import { ApiForm } from "@/components/api-form";
 import { formatDate, formatXAF } from "@/lib/utils";
 
 import { guardPage } from "@/lib/guard";
@@ -16,7 +16,7 @@ export default async function CouponsPage() {
       <h1 className="display text-3xl">Discounts & coupons</h1>
       <p className="mt-2 text-sm text-ink-soft">Percentage off, a fixed amount off, or free delivery.</p>
 
-      <ActionForm action={saveCouponAction} submitLabel="Save code" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
+      <ActionForm action="saveCouponAction" submitLabel="Save code" className="card mt-6 grid gap-4 p-6 sm:grid-cols-2">
         <div><label className="label" htmlFor="code">Code</label><input id="code" name="code" required className="field" placeholder="WELCOME10" /></div>
         <div>
           <label className="label" htmlFor="type">Type</label>
@@ -46,11 +46,11 @@ export default async function CouponsPage() {
               <td>{coupon.timesUsed}{coupon.usageLimit ? ` / ${coupon.usageLimit}` : ""}</td>
               <td className="text-xs text-muted">{coupon.expiresAt ? formatDate(coupon.expiresAt) : "No expiry"}</td>
               <td>
-                <form action={toggleCouponAction}>
+                <ApiForm action="toggleCouponAction">
                   <input type="hidden" name="id" value={coupon.id} />
                   <input type="hidden" name="isActive" value={String(coupon.isActive)} />
                   <button className="chip">{coupon.isActive ? "Active — switch off" : "Off — switch on"}</button>
-                </form>
+                </ApiForm>
               </td>
             </tr>
           ))}
