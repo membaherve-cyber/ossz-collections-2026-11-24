@@ -177,8 +177,8 @@ class PageController extends Controller
             'name' => 'required|string|max:120',
             'contact' => 'required|string|max:120',
             'service' => 'nullable|string|max:80',
-            'date' => 'required|date',
-            'time' => 'required',
+            'date' => 'required|date|after_or_equal:today',
+            'time' => 'required|date_format:H:i',
             'notes' => 'nullable|string|max:2000',
         ]);
 
@@ -232,10 +232,8 @@ class PageController extends Controller
 
     public function newsletter(Request $request)
     {
-        $email = strtolower(trim((string) $request->input('email')));
-        if (! str_contains($email, '@')) {
-            return back()->with('error', 'Please enter a valid email address.');
-        }
+        $validated = $request->validate(['email' => 'required|email|max:160']);
+        $email = strtolower(trim($validated['email']));
         NewsletterSignup::firstOrCreate(['email' => $email]);
 
         return back()->with('success', 'Thank you — you are on the list.');
@@ -281,8 +279,19 @@ class PageController extends Controller
     public function switchLocale(Request $request, ?string $locale = null)
     {
         $target = ($locale ?: $request->input('locale')) === 'fr' ? 'fr' : 'en';
-        cookie()->queue(\App\Support\I18n::COOKIE, $target, 60 * 24 * 365);
 
-        return back();
+        // Attach the cookie to the redirect response directly (the queued
+        // cookie jar is not reliably flushed for redirect responses here).
+        return back()->withCookie(cookie(
+            \App\Support\I18n::COOKIE,
+            $target,
+            60 * 24 * 365,
+            '/',
+            config('session.domain'),
+            config('session.secure'),
+            true,
+            false,
+            config('session.same_site') ?? 'lax'
+        ));
     }
 }

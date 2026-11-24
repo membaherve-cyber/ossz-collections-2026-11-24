@@ -10,6 +10,7 @@ use App\Models\Product;
 use App\Models\ProductVariant;
 use App\Support\Cart;
 use App\Support\Notify;
+use App\Support\Settings;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -62,19 +63,40 @@ class CheckoutController extends Controller
             })
             ->orderBy('id')
             ->first();
-        $deliveryMethod = $validated['deliveryMethod'] ?? 'national';
-        $deliveryFee = $deliveryMethod === 'pickup' ? 0 : ($zone->fee ?? 6500);
 
         $subtotal = $cart['subtotal'];
         $discount = $cart['couponCode'] ? Cart::computeDiscount($cart['couponCode'], $subtotal) : 0;
-        if ($cart['couponCode']) {
-            $coupon = Coupon::where('code', strtoupper($cart['couponCode']))->first();
-            if ($coupon?->type === 'free_delivery') {
+        $discount = min($discount, $subtotal);
+        $deliveryMethod = $validated['deliveryMethod'] ?? 'national';
+        $deliveryFee = $deliveryMethod === 'pickup' ? 0 : ($zone->fee ?? 6500);
+
+        // Free nationwide delivery above the configured threshold (pickup is
+        // already free and the threshold does not apply to it).
+        if ($deliveryMethod !== 'pickup') {
+            $threshold = (int) Settings::get('free_delivery_threshold', '150000');
+            if ($threshold > 0 && ($subtotal - $discount) >= $threshold) {
                 $deliveryFee = 0;
             }
-            $coupon?->increment('times_used');
         }
-        $discount = min($discount, $subtotal);
+
+        // The free_delivery coupon zeroes the fee only when the coupon is
+        // actually usable (active, unexpired, within its usage limit) — the
+        // same conditions computeDiscount() enforces for money discounts.
+        $coupon = null;
+        if ($cart['couponCode']) {
+            $coupon = Coupon::where('code', strtoupper($cart['couponCode']))
+                ->where('is_active', true)
+                ->first();
+            if ($coupon && $coupon->expires_at && $coupon->expires_at->isPast()) {
+                $coupon = null;
+            }
+            if ($coupon && $coupon->usage_limit > 0 && $coupon->times_used >= $coupon->usage_limit) {
+                $coupon = null;
+            }
+            if ($coupon?->type === 'free_delivery' && $deliveryMethod !== 'pickup') {
+                $deliveryFee = 0;
+            }
+        }
         $total = $subtotal - $discount + $deliveryFee;
 
         $userId = session('user_id');
@@ -98,7 +120,8 @@ class CheckoutController extends Controller
             }
         }
 
-        $order = DB::transaction(function () use ($cart, $validated, $userId, $paymentMethod, $deliveryMethod, $zone, $deliveryFee, $subtotal, $discount, $total) {
+        try {
+            $order = DB::transaction(function () use ($cart, $validated, $userId, $paymentMethod, $deliveryMethod, $zone, $deliveryFee, $subtotal, $discount, $total, $coupon) {
             $order = Order::create([
                 'order_number' => make_order_number(),
                 'user_id' => $userId,
@@ -112,7 +135,10 @@ class CheckoutController extends Controller
                 'total' => $total,
                 'coupon_code' => $cart['couponCode'] ?? '',
                 'payment_method' => $paymentMethod,
-                'payment_status' => $paymentMethod === 'cash_on_delivery' ? 'pending' : 'paid',
+                // Nothing is trusted as paid before staff verification: mobile
+                // money transfers and card payments must upload proof / be
+                // confirmed in the backoffice. COD is collected on delivery.
+                'payment_status' => 'pending',
                 'delivery_method' => $deliveryMethod,
                 'delivery_zone' => $zone?->name ?? 'In-store pickup',
                 'shipping_snapshot' => [
@@ -127,6 +153,11 @@ class CheckoutController extends Controller
             ]);
 
             foreach ($cart['lines'] as $line) {
+                // Refuse overselling: re-read stock inside the transaction.
+                $variant = ProductVariant::where('id', $line['variantId'])->lockForUpdate()->first();
+                if (! $variant || (int) $variant->stock_qty < $line['quantity']) {
+                    throw new \RuntimeException('Insufficient stock for '.$line['name'].' ('.$line['size'].' / '.$line['colour'].'). Please adjust the quantity.');
+                }
                 OrderItem::create([
                     'order_id' => $order->id,
                     'variant_id' => $line['variantId'],
@@ -137,11 +168,7 @@ class CheckoutController extends Controller
                     'quantity' => $line['quantity'],
                     'unit_price' => $line['unitPrice'],
                 ]);
-                ProductVariant::where('id', $line['variantId'])->decrement(
-                    'stock_qty',
-                    $line['quantity'],
-                    ['stock_qty' => DB::raw('GREATEST(stock_qty - '.$line['quantity'].', 0)')]
-                );
+                ProductVariant::where('id', $line['variantId'])->decrement('stock_qty', $line['quantity']);
                 Product::where('id', $line['productId'])->increment('popularity', $line['quantity']);
             }
 
@@ -149,7 +176,15 @@ class CheckoutController extends Controller
             \App\Models\Cart::where('id', $cart['id'])->update(['coupon_code' => null]);
 
             return $order;
-        });
+            });
+        } catch (\RuntimeException $e) {
+            return back()->with('error', $e->getMessage())->withInput();
+        }
+
+        // Count a coupon as used only when an order actually carried it.
+        if ($coupon) {
+            $coupon->increment('times_used');
+        }
 
         Notify::orderPlaced($order->id);
 
@@ -168,12 +203,23 @@ class CheckoutController extends Controller
     {
         $validated = $request->validate([
             'order_number' => 'required|string|max:24',
-            'proof' => 'required|image|max:8192',
+            // Contact confirmation — an order number alone must not allow
+            // overwriting someone else's payment proof.
+            'contact' => 'required|string|max:160',
+            'proof' => 'required|file|mimes:jpg,jpeg,png,webp,avif,pdf|max:8192',
         ]);
 
         $order = Order::where('order_number', strtoupper(trim($validated['order_number'])))->first();
         if (! $order) {
             return back()->with('error', 'We could not find that order number.');
+        }
+
+        $contact = trim($validated['contact']);
+        $digits = fn ($v) => preg_replace('/\D/', '', $v ?? '');
+        $matched = strcasecmp((string) $order->guest_email, $contact) === 0
+            || ($contact !== '' && $digits($order->guest_phone) === $digits($contact));
+        if (! $matched) {
+            return back()->with('error', 'That contact does not match the order. Use the email or phone the order was placed with.');
         }
 
         $path = $request->file('proof')->store('payment-proofs', 'local_custom');

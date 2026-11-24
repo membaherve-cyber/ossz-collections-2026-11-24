@@ -98,13 +98,12 @@ php artisan route:cache
 php artisan view:cache
 ```
 
-## Default Staff Accounts
+## Staff Accounts
 
-| Email | Username | Password | Role |
-|-------|----------|----------|------|
-| admin@osszcollection.com | admin | OsszAdmin2026! | admin |
-| staff@osszcollection.com | staff | OsszStaff2026! | staff |
-| uploader@osszcollection.com | uploader | OsszUpload2026! | uploader |
+The seeder creates one admin, one staff and one uploader account. The generated
+passwords are printed to the console **once** during `db:seed` — store them in a
+password manager and rotate them immediately after the first login
+(Admin → Staff). They are deliberately not written anywhere in this repository.
 
 ## Optional Integrations
 

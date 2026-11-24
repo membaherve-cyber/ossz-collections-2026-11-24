@@ -46,6 +46,7 @@ class DashboardController extends Controller
 
     public function updateOrderStatus(Request $request)
     {
+        $this->guard();
         $request->validate(['order_number' => 'required|string', 'status' => 'required|string']);
         $order = Order::where('order_number', $request->input('order_number'))->firstOrFail();
         $this->transition($order, $request->input('status'));
@@ -55,6 +56,7 @@ class DashboardController extends Controller
 
     public function resendNotification(Request $request)
     {
+        $this->guard();
         $notification = Notification::findOrFail((int) $request->input('id'));
         if ($notification->order_id) {
             Notify::orderStatusChanged($notification->order, $notification->order->status);
@@ -73,5 +75,14 @@ class DashboardController extends Controller
         $old = $order->status;
         $order->update(['status' => $status, 'updated_at' => now()]);
         Notify::orderStatusChanged($order, $old);
+    }
+
+    /** Order fulfilment requires the staff role or above. */
+    private function guard(): void
+    {
+        $user = request()->attributes->get('ossz_user');
+        if (! Auth::canFulfilOrders($user->role ?? 'customer')) {
+            abort(redirect()->route('admin.dashboard')->with('error', 'Insufficient permissions.'));
+        }
     }
 }

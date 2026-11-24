@@ -5,6 +5,12 @@
 
     RewriteEngine On
 
+    # Never serve secrets or backup files (defence in depth: sensitive files
+    # must also live outside the docroot).
+    <FilesMatch "^\.env|\.env\.|\.sqlite$|\.git">
+        Require all denied
+    </FilesMatch>
+
     # Handle Front Controller...
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f

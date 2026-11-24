@@ -63,6 +63,14 @@
                 </div>
             </form>
 
+            <form method="POST" action="{{ route('account.wishlist.toggle') }}" style="margin-top:.6rem">
+                @csrf
+                <input type="hidden" name="product_id" value="{{ $p->id }}">
+                <button class="btn btn-ghost" type="submit" style="font-size:.85rem">
+                    {{ t('buy.ln') }}
+                </button>
+            </form>
+
             <div class="pdp-block">
                 <h3>{{ t('buy.delivery') }}</h3>
                 <p style="font-size:.85rem;color:var(--ink-soft)">{{ t('buy.returns') }}</p>

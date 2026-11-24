@@ -49,17 +49,5 @@
             </p>
         </form>
     </div>
-
-    {{-- Demonstration accounts callout matching Next.js 1:1 --}}
-    <div style="margin-top:1.5rem;border-radius:4px;border:1px solid var(--line);background:rgba(241,242,244,.6);padding:1rem;font-size:.75rem;color:var(--ink-soft);line-height:1.6;">
-        <p style="font-weight:600;color:var(--ink);">Back office</p>
-        <p style="margin-top:.25rem;"><span style="font-family:monospace;font-weight:600;">admin / admin</span> · full access</p>
-        <p><span style="font-family:monospace;font-weight:600;">manager / manager</span> · full access (owner &amp; manager)</p>
-        <p><span style="font-family:monospace;font-weight:600;">staff / staff</span> · orders, stock, appointments</p>
-
-        <p style="margin-top:.75rem;font-weight:600;color:var(--ink);">Other demonstration accounts (password: <span style="font-family:monospace;">ossz2026</span>)</p>
-        <p style="margin-top:.25rem;"><span style="font-family:monospace;">studio@osszcollections.cm</span> · content uploader</p>
-        <p><span style="font-family:monospace;">client@example.com</span> · customer</p>
-    </div>
 </div>
 @endsection

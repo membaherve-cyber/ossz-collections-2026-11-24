@@ -20,6 +20,9 @@ final class Cart
 {
     public const SESSION_KEY = 'ossz_cart_id';
 
+    /** Upper bound for one cart line — repeated adds cannot exceed it. */
+    public const MAX_QTY_PER_LINE = 20;
+
     /** @return array{id: ?int, lines: array, subtotal: int, itemCount: int, couponCode: ?string, discount: int} */
     public static function view(): array
     {
@@ -118,32 +121,51 @@ final class Cart
     public static function addVariant(int $variantId, int $quantity = 1): void
     {
         $cartId = self::getOrCreateId();
+        $variant = ProductVariant::find($variantId);
+        if (! $variant) {
+            return;
+        }
         $item = CartItem::where('cart_id', $cartId)->where('variant_id', $variantId)->first();
         if ($item) {
-            $item->quantity += $quantity;
+            $item->quantity = min($item->quantity + max(1, $quantity), self::MAX_QTY_PER_LINE);
             $item->save();
         } else {
-            CartItem::create(['cart_id' => $cartId, 'variant_id' => $variantId, 'quantity' => $quantity]);
+            CartItem::create([
+                'cart_id' => $cartId,
+                'variant_id' => $variantId,
+                'quantity' => min(max(1, $quantity), self::MAX_QTY_PER_LINE),
+            ]);
         }
     }
 
     public static function updateLine(int $itemId, int $quantity): void
     {
-        $item = CartItem::find($itemId);
+        // Ownership check: the line must belong to the visitor's own cart
+        // (sequential ids must never be editable by another session).
+        $cartId = self::currentCartId();
+        if (! $cartId) {
+            return;
+        }
+        $item = CartItem::where('id', $itemId)->where('cart_id', $cartId)->first();
         if (! $item) {
             return;
         }
         if ($quantity <= 0) {
             $item->delete();
         } else {
-            $item->quantity = $quantity;
+            $item->quantity = min($quantity, self::MAX_QTY_PER_LINE);
             $item->save();
         }
     }
 
     public static function removeLine(int $itemId): void
     {
-        CartItem::where('id', $itemId)->delete();
+        // Ownership check — see updateLine().
+        $cartId = self::currentCartId();
+        if (! $cartId) {
+            return;
+        }
+        CartItem::where('id', $itemId)->where('cart_id', $cartId)->delete();
     }
 
     public static function applyCoupon(string $code): bool

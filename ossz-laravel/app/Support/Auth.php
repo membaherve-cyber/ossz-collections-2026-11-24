@@ -26,14 +26,11 @@ final class Auth
         if (str_starts_with($stored, '$2y$') || str_starts_with($stored, '$2a$')) {
             return password_verify($password, $stored);
         }
-        $parts = explode(':', $stored);
-        if (count($parts) !== 2) {
-            return false;
-        }
-        [$salt, $key] = $parts;
-        $derived = hash('scrypt', $password, $salt, 64);
-
-        return hash_equals($key, $derived);
+        // Legacy "salt:hex" rows were produced by the Node.js era (scrypt).
+        // PHP offers no scrypt KDF, so those hashes cannot be verified here;
+        // fail closed (never crash) and direct the account through the
+        // forgot-password flow, which stores a fresh bcrypt hash.
+        return false;
     }
 
     public static function hasAtLeast(?string $role, string $minimum): bool

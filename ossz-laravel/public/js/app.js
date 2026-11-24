@@ -1,6 +1,11 @@
-/* OSSZ Collections — storefront JS (nav, concierge chat, product cards). */
+/* OSSZ Collections — storefront JS (nav, concierge chat, product cards, PWA). */
 (function () {
     'use strict';
+
+    // ── PWA service worker (relative scope, same-origin caches only) ──
+    if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost' || location.hostname === '127.0.0.1')) {
+        navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(function () { /* offline support is best-effort */ });
+    }
 
     // ── Mobile nav ────────────────────────────────────────────────────
     var toggle = document.querySelector('.nav-toggle');

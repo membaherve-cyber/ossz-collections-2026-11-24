@@ -27,10 +27,10 @@ in Step 4 below. This is the standard, correct approach.
    - Password: YOUR_CPANEL_PASSWORD
 
 ┌─────────────────────────────────────────────────────────────────────────────┐
-│ STEP 2: CREATE POSTGRESQL DATABASE                                          │
+│ STEP 2: CREATE MYSQL DATABASE                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 
-1. In cPanel, find "PostgreSQL Databases" (search "postgres" in search bar)
+1. In cPanel, find "MySQL® Databases" (search "mysql" in the search bar)
 
 2. Create Database:
    - Database Name: osszcollection_laravel
@@ -136,9 +136,9 @@ APP_URL=https://osszcollection.com
 LOG_CHANNEL=stack
 LOG_LEVEL=error
 
-DB_CONNECTION=pgsql
+DB_CONNECTION=mysql
 DB_HOST=localhost
-DB_PORT=5432
+DB_PORT=3306
 DB_DATABASE=osszcollection_laravel
 DB_USERNAME=osszcollection_user
 DB_PASSWORD=YOUR_PASSWORD_HERE
@@ -147,11 +147,15 @@ SESSION_DRIVER=database
 SESSION_LIFETIME=120
 CACHE_STORE=database
 
-GEMINI_API_KEY=YOUR_GEMINI_API_KEY_HERE
-GEMINI_API_KEY2=YOUR_SECOND_API_KEY_HERE
+# Secure cookies — the site is served over HTTPS.
+SESSION_SECURE_COOKIE=true
 
-WHATSAPP_NUMBER=+YOUR_WHATSAPP_NUMBER
-CONTACT_EMAIL=info@osszcollection.com
+# Optional integrations (leave empty to use the built-in fallbacks)
+IMAGEKIT_PRIVATE_KEY=
+GEMINI_API_KEY=
+GEMINI_API_KEY2=
+RESEND_API_KEY=
+RESEND_FROM="OSSZ Collections <hello@osszcollection.com>"
 
 4. Click "Save Changes"
 
@@ -204,14 +208,15 @@ chmod -R 775 bootstrap/cache
    - You should see the OSSZ homepage
 
 2. Visit: https://osszcollection.com/login
-   - Login with:
-     Email: admin@osszcollection.com
-     Password: password
+   - Login with the admin credentials you created in the seeder
+     (the seeder prints them to the console once — store them in a
+     password manager and do NOT commit them to the repository).
 
 3. Visit: https://osszcollection.com/admin
    - You should see the backoffice dashboard
 
-⚠️ Change the default admin password after first login!
+⚠️ Rotate the seeded staff passwords immediately after first login
+   (Admin → Staff) and never leave the printed credentials in docs or chat.
 
 ══════════════════════════════════════════════════════════════════════════════
                               TROUBLESHOOTING
@@ -243,6 +248,6 @@ Your OSSZ Collections website is now live at:
 
 Backoffice:
 🔐 https://osszcollection.com/admin
-   Email: admin@osszcollection.com
-   Password: password
+   Sign in with the admin account created during seeding
+   (rotate every seeded staff password immediately after first login).
 

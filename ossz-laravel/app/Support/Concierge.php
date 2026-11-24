@@ -61,6 +61,7 @@ final class Concierge
             ->map(fn ($z) => "- {$z->name}: ".format_xaf($z->fee)." ({$z->eta_label})")
             ->implode("\n");
         $faqs = Faq::orderBy('sort_order')->limit(12)
+            ->get()
             ->map(fn ($f) => "- Q: ".pick($f->question, $f->question_fr)."\n  A: ".pick($f->answer, $f->answer_fr))
             ->implode("\n");
 

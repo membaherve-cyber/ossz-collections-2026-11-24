@@ -121,7 +121,11 @@ final class ProductQuery
     /** Product page payload: product + images + variants + parents. */
     public static function bySlug(string $slug): ?array
     {
-        $product = Product::with(['category', 'collection'])->where('slug', $slug)->first();
+        // Drafts are never publicly viewable, even by direct slug.
+        $product = Product::with(['category', 'collection'])
+            ->where('slug', $slug)
+            ->where('is_published', true)
+            ->first();
         if (! $product) {
             return null;
         }

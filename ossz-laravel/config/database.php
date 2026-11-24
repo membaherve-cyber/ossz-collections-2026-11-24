@@ -5,14 +5,18 @@ return [
     'connections' => [
         'sqlite' => [
             'driver' => 'sqlite',
-            'url' => env('DATABASE_URL'),
+            // No DATABASE_URL: container envs may export a placeholder (e.g. file:) that
+            // would override the DB_* settings below via Laravel's URL parsing.
+            'url' => null,
             'database' => env('DB_DATABASE', database_path('database.sqlite')),
             'prefix' => '',
             'foreign_key_constraints' => env('DB_FOREIGN_KEYS', true),
         ],
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DATABASE_URL'),
+            // No DATABASE_URL: container envs may export a placeholder (e.g. file:) that
+            // would override the DB_* settings below via Laravel's URL parsing.
+            'url' => null,
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'ossz'),
@@ -31,7 +35,9 @@ return [
         ],
         'mariadb' => [
             'driver' => 'mariadb',
-            'url' => env('DATABASE_URL'),
+            // No DATABASE_URL: container envs may export a placeholder (e.g. file:) that
+            // would override the DB_* settings below via Laravel's URL parsing.
+            'url' => null,
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '3306'),
             'database' => env('DB_DATABASE', 'ossz'),
@@ -47,7 +53,9 @@ return [
         ],
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DATABASE_URL'),
+            // No DATABASE_URL: container envs may export a placeholder (e.g. file:) that
+            // would override the DB_* settings below via Laravel's URL parsing.
+            'url' => null,
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
             'database' => env('DB_DATABASE', 'ossz'),

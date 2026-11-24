@@ -18,8 +18,16 @@ class ConciergeController extends Controller
     {
         $payload = $request->json()->all();
         $locale = (($payload['locale'] ?? 'en') === 'fr') ? 'fr' : 'en';
+        // Harden the client-supplied history: only arrays with short string
+        // contents survive — anything else is dropped before Gemini sees it.
         $history = collect($payload['messages'] ?? [])
-            ->filter(fn ($m) => is_string($m['content'] ?? null))
+            ->filter(fn ($m) => is_array($m)
+                && in_array(($m['role'] ?? ''), ['user', 'assistant'], true)
+                && is_string($m['content'] ?? null))
+            ->map(fn ($m) => [
+                'role' => (string) $m['role'],
+                'content' => mb_substr((string) $m['content'], 0, 1200),
+            ])
             ->slice(-10)
             ->values()
             ->all();

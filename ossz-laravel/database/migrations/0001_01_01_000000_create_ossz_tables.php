@@ -202,6 +202,7 @@ return new class extends Migration
             $table->string('status')->default('requested'); // requested|confirmed|completed|cancelled
             $table->text('notes')->nullable();
             $table->timestamp('created_at')->nullable();
+            $table->timestamp('updated_at')->nullable();
             $table->index(['slot_start', 'user_id']);
         });
 

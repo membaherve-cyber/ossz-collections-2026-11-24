@@ -85,7 +85,7 @@ class ContentController extends Controller
             'author_name' => 'nullable|string|max:120',
             'status' => 'required|in:draft,published',
         ]);
-        $data['slug'] = slugify($data['slug'] ?: $data['title']);
+        $data['slug'] = slugify(($data['slug'] ?? '') ?: $data['title']);
         if ($request->hasFile('file')) {
             $result = \App\Support\ImageKit::upload($request->file('file'), 'journal');
             $data['cover_image'] = $result['url'];

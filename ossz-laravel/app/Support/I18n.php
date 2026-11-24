@@ -21,8 +21,19 @@ final class I18n
         if (self::$resolved !== null) {
             return self::$resolved;
         }
-        $value = $_COOKIE[self::COOKIE] ?? request()->cookie(self::COOKIE);
+        // Read through the request cookie jar only: cookies are encrypted,
+        // and raw $_COOKIE still holds the ciphertext (never 'fr'), which
+        // silently pinned every visitor to English after the first switch.
+        // Called at render time, after EncryptCookies has decrypted them.
+        $value = request()->cookie(self::COOKIE);
         self::$resolved = ($value === 'fr') ? 'fr' : 'en';
+
+        // Keep the framework locale in sync (html lang, validation messages).
+        try {
+            app()->setLocale(self::$resolved);
+        } catch (\Throwable) {
+            // Outside a request lifecycle (artisan) the default applies.
+        }
 
         return self::$resolved;
     }

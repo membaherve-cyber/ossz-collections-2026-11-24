@@ -31,21 +31,33 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── Staff logins ───────────────────────────────────────────────
+        // Passwords are NEVER committed to the repository: on first creation a
+        // random one is generated and printed to the console once. Set the
+        // SEED_STAFF_PASSWORD env var in a local sandbox if you need a
+        // deterministic value; in production let it be random and store it in
+        // a password manager, then rotate after first login.
         $staff = [
-            ['email' => 'admin@osszcollection.com', 'username' => 'admin', 'full_name' => 'OSSZ Admin', 'role' => 'admin', 'password' => 'OsszAdmin2026!'],
-            ['email' => 'staff@osszcollection.com', 'username' => 'staff', 'full_name' => 'OSSZ Staff', 'role' => 'staff', 'password' => 'OsszStaff2026!'],
-            ['email' => 'uploader@osszcollection.com', 'username' => 'uploader', 'full_name' => 'OSSZ Uploader', 'role' => 'uploader', 'password' => 'OsszUpload2026!'],
+            ['email' => 'admin@osszcollection.com', 'username' => 'admin', 'full_name' => 'OSSZ Admin', 'role' => 'admin'],
+            ['email' => 'staff@osszcollection.com', 'username' => 'staff', 'full_name' => 'OSSZ Staff', 'role' => 'staff'],
+            ['email' => 'uploader@osszcollection.com', 'username' => 'uploader', 'full_name' => 'OSSZ Uploader', 'role' => 'uploader'],
         ];
         foreach ($staff as $s) {
-            User::updateOrCreate(
-                ['email' => $s['email']],
-                [
-                    'username' => $s['username'],
-                    'full_name' => $s['full_name'],
-                    'role' => $s['role'],
-                    'password_hash' => Auth::hashPassword($s['password']),
-                ]
-            );
+            $creating = ! User::where('email', $s['email'])->exists();
+            $password = $creating
+                ? (getenv('SEED_STAFF_PASSWORD') ?: 'Ossz-'.bin2hex(random_bytes(6)))
+                : null; // never overwrite an existing password on re-seed
+            $values = [
+                'username' => $s['username'],
+                'full_name' => $s['full_name'],
+                'role' => $s['role'],
+            ];
+            if ($creating) {
+                $values['password_hash'] = Auth::hashPassword($password);
+            }
+            User::updateOrCreate(['email' => $s['email']], $values);
+            if ($creating) {
+                $this->command?->warn("Staff account created — {$s['role']}: {$s['email']} / username {$s['username']} — password: {$password} (printed once — store it now)");
+            }
         }
 
         // ── Categories ─────────────────────────────────────────────────

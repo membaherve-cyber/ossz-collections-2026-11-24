@@ -43,10 +43,10 @@ Route::redirect('/terms', '/about');
 Route::match(['get', 'post'], '/locale/{locale?}', [PageController::class, 'switchLocale'])->name('locale.switch');
 
 // ── Public form actions ─────────────────────────────────────────────
-Route::post('/newsletter', [PageController::class, 'newsletter'])->name('newsletter');
-Route::post('/contact', [PageController::class, 'contactSubmit'])->name('contact.submit');
-Route::post('/appointments', [PageController::class, 'bookAppointment'])->name('appointments.book');
-Route::post('/order-lookup', [PageController::class, 'orderLookup'])->name('order.lookup');
+Route::post('/newsletter', [PageController::class, 'newsletter'])->middleware('throttle:10,1')->name('newsletter');
+Route::post('/contact', [PageController::class, 'contactSubmit'])->middleware('throttle:10,1')->name('contact.submit');
+Route::post('/appointments', [PageController::class, 'bookAppointment'])->middleware('throttle:10,1')->name('appointments.book');
+Route::post('/order-lookup', [PageController::class, 'orderLookup'])->middleware('throttle:10,1')->name('order.lookup');
 Route::get('/order-lookup', [PageController::class, 'orderLookupForm'])->name('order.lookup.form');
 Route::get('/order/{number}', [PageController::class, 'orderTrack'])->name('order.track');
 
@@ -59,16 +59,16 @@ Route::get('/cart', [CartController::class, 'show'])->name('cart.show');
 Route::get('/checkout', [CheckoutController::class, 'show'])->name('checkout.show');
 Route::post('/checkout', [CheckoutController::class, 'placeOrder'])->name('checkout.place');
 Route::get('/checkout/payment-proof', [CheckoutController::class, 'paymentProofForm'])->name('checkout.proof.form');
-Route::post('/checkout/payment-proof', [CheckoutController::class, 'paymentProof'])->name('checkout.proof');
+Route::post('/checkout/payment-proof', [CheckoutController::class, 'paymentProof'])->middleware('throttle:10,1')->name('checkout.proof');
 
 // ── Auth ────────────────────────────────────────────────────────────
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
-Route::post('/login', [AuthController::class, 'login'])->name('login.attempt');
+Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:5,1')->name('login.attempt');
 Route::get('/register', [AuthController::class, 'showRegister'])->name('register');
-Route::post('/register', [AuthController::class, 'register'])->name('register.store');
+Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:10,1')->name('register.store');
 Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 Route::get('/forgot-password', [AuthController::class, 'showForgot'])->name('password.request');
-Route::post('/forgot-password', [AuthController::class, 'requestReset'])->name('password.email');
+Route::post('/forgot-password', [AuthController::class, 'requestReset'])->middleware('throttle:5,1')->name('password.email');
 Route::get('/reset-password', [AuthController::class, 'showReset'])->name('password.reset');
 Route::post('/reset-password', [AuthController::class, 'completeReset'])->name('password.update');
 
@@ -165,5 +165,5 @@ Route::middleware('auth.admin')->prefix('admin')->name('admin.')->group(function
     Route::post('/ai-gaps', [Admin\AiGapController::class, 'resolve'])->name('ai-gaps.resolve');
     Route::get('/settings', [Admin\SettingsController::class, 'index'])->name('settings');
     Route::post('/settings', [Admin\SettingsController::class, 'save'])->name('settings.save');
-    Route::get('/export', [Admin\ExportController::class, 'csv'])->name('export');
+    Route::get('/export/{type}', [Admin\ExportController::class, 'csv'])->name('export');
 });

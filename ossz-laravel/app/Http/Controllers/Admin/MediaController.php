@@ -22,7 +22,9 @@ class MediaController extends Controller
     {
         $this->guard();
         $request->validate([
-            'file' => 'required|file|max:51200',
+            // Explicit allowlist (never accept arbitrary files; svg excluded
+            // because browsers execute scripts inside inline SVG).
+            'file' => 'required|file|mimes:jpg,jpeg,png,webp,avif,gif,mp4,webm,mov,pdf|max:51200',
             'tags' => 'nullable|string|max:200',
         ]);
         $file = $request->file('file');
@@ -47,7 +49,7 @@ class MediaController extends Controller
 
         try {
             $request->validate([
-                'file'   => 'required|file|image|max:15360',
+                'file'   => 'required|file|mimes:jpg,jpeg,png,webp,avif,gif|max:15360',
                 'folder' => 'nullable|string|in:products,lookbook,collections,journal,homepage-blocks,media',
             ]);
 

@@ -36,7 +36,18 @@ class AuthController extends Controller
         session(['user_id' => $user->id]);
         session()->regenerate();
 
-        return redirect($next ?: ($user->role === 'customer' ? '/account' : '/admin'));
+        return redirect($this->safeNext($next) ?: ($user->role === 'customer' ? '/account' : '/admin'));
+    }
+
+    /** Accept only local paths for post-auth redirects (no open redirect). */
+    private function safeNext(string $next): string
+    {
+        $next = trim($next);
+        if ($next === '' || ! str_starts_with($next, '/') || str_starts_with($next, '//') || str_starts_with($next, '/\\')) {
+            return '';
+        }
+
+        return $next;
     }
 
     public function showRegister()
@@ -69,7 +80,7 @@ class AuthController extends Controller
         session(['user_id' => $user->id]);
         session()->regenerate();
 
-        return redirect((string) $request->input('next', '/account'));
+        return redirect($this->safeNext((string) $request->input('next')) ?: '/account');
     }
 
     public function logout(Request $request)
@@ -87,18 +98,17 @@ class AuthController extends Controller
 
     public function requestReset(Request $request)
     {
-        $email = strtolower(trim((string) $request->input('email')));
+        $validated = $request->validate(['email' => 'required|email|max:160']);
+        $email = strtolower(trim($validated['email']));
         $generic = 'If that address has an account, a reset link is on its way.';
-        if (! str_contains($email, '@')) {
-            return back()->with('error', 'Please enter a valid email address.');
-        }
 
         $user = User::where('email', $email)->first();
         if ($user) {
             $token = bin2hex(random_bytes(24));
             PasswordReset::create([
                 'user_id' => $user->id,
-                'token' => $token,
+                // Stored hashed: a database leak must not expose live reset links.
+                'token' => hash('sha256', $token),
                 'expires_at' => now()->addHour(),
             ]);
             Notify::passwordReset($email, $user->full_name ?: 'customer', $token);
@@ -119,7 +129,7 @@ class AuthController extends Controller
         if (strlen($password) < 6) {
             return back()->with('error', 'Please choose a password of at least 6 characters.');
         }
-        $reset = PasswordReset::where('token', $token)->first();
+        $reset = PasswordReset::where('token', hash('sha256', $token))->first();
         if (! $reset || $reset->used_at || $reset->expires_at->isPast()) {
             return back()->with('error', 'That link has expired. Please request a new one.');
         }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Appointment;
 use App\Models\Address;
+use App\Models\Order;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Wishlist;
@@ -33,8 +34,21 @@ class AccountController extends Controller
 
     public function orders()
     {
+        $user = $this->user();
+
         return view('account.orders', [
-            'orders' => $this->user()->orders()->with('items')->orderByDesc('created_at')->get(),
+            // Orders placed while signed in, plus guest orders that used this
+            // account's email (e.g. checked out before registering).
+            'orders' => Order::query()
+                ->where(function ($q) use ($user) {
+                    $q->where('user_id', $user->id)
+                        ->orWhere(function ($q2) use ($user) {
+                            $q2->whereNull('user_id')->where('guest_email', $user->email);
+                        });
+                })
+                ->with('items')
+                ->orderByDesc('created_at')
+                ->get(),
         ]);
     }
 
@@ -115,6 +129,8 @@ class AccountController extends Controller
             'fullName' => 'nullable|string|max:120',
             'phone' => 'nullable|string|max:40',
             'password' => 'nullable|min:6|max:120',
+            // Changing the password requires proving ownership of the account.
+            'currentPassword' => 'required_with:password|nullable|string|max:120',
         ]);
 
         $user = $this->user();
@@ -123,6 +139,9 @@ class AccountController extends Controller
             'phone' => $validated['phone'] ?? $user->phone,
         ];
         if (! empty($validated['password'])) {
+            if (! Auth::verifyPassword((string) ($validated['currentPassword'] ?? ''), $user->password_hash)) {
+                return back()->with('error', 'Your current password is not correct — the password was not changed.');
+            }
             $values['password_hash'] = Auth::hashPassword($validated['password']);
         }
         $user->update($values);
@@ -141,6 +160,10 @@ class AccountController extends Controller
     {
         $productId = (int) $request->input('product_id');
         $userId = session('user_id');
+        // Validate the product: a bogus id must not crash on a FK violation.
+        if ($productId < 1 || ! Product::find($productId)) {
+            return back()->with('error', 'That piece could not be saved.');
+        }
         $existing = Wishlist::where('user_id', $userId)->where('product_id', $productId)->first();
         if ($existing) {
             $existing->delete();

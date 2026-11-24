@@ -15,7 +15,9 @@ return [
     'cookie' => env('SESSION_COOKIE', 'ossz_session'),
     'path' => '/',
     'domain' => env('SESSION_DOMAIN'),
-    'secure' => env('SESSION_SECURE_COOKIE'),
+    // Secure cookies on HTTPS hosts (production sets SESSION_SECURE_COOKIE=true;
+    // the local sandbox stays unset so plain-HTTP sessions still work).
+    'secure' => env('SESSION_SECURE_COOKIE', false),
     'http_only' => true,
     'same_site' => 'lax',
     'partitioned' => false,

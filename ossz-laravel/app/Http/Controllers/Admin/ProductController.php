@@ -192,7 +192,7 @@ class ProductController extends Controller
         $this->guard('catalogue');
 
         return view('admin.inventory', [
-            'variants' => ProductVariant::with(['product', 'product.images'])
+            'variants' => ProductVariant::with(['product.collection', 'product.images'])
                 ->orderBy('product_id')
                 ->orderBy('size')
                 ->get(),
@@ -231,10 +231,10 @@ class ProductController extends Controller
 
     private function uniqueSlug(string $source): string
     {
-        $base = $source !== '' ? $source : 'piece';
+        $base = slugify($source !== '' ? $source : 'piece');
         $slug = $base;
         $i = 2;
-        while (Product::where('slug', $slug)->exists()) {
+        while (Product::where('slug', $slug)->exists() || Collection::where('slug', $slug)->exists()) {
             $slug = $base.'-'.$i++;
         }
 

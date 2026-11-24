@@ -17,6 +17,10 @@
                 <label class="label" for="password">{{ is_fr() ? 'Nouveau mot de passe (optionnel)' : 'New password (optional)' }}</label>
                 <input class="field" id="password" type="password" name="password" minlength="6" autocomplete="new-password">
             </div>
+            <div>
+                <label class="label" for="currentPassword">{{ is_fr() ? 'Mot de passe actuel (pour confirmer le nouveau)' : 'Current password (to confirm a new one)' }}</label>
+                <input class="field" id="currentPassword" type="password" name="currentPassword" autocomplete="current-password">
+            </div>
             <button class="btn btn-primary" type="submit">{{ is_fr() ? 'Enregistrer' : 'Save' }}</button>
         </form>
     </div>
