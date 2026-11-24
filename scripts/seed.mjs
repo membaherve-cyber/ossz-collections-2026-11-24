@@ -1,8 +1,12 @@
 import { randomBytes, scryptSync } from "node:crypto";
 import pg from "pg";
 
-const connectionString =
+const rawUrl =
   process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/app_db";
+// Sandbox guard: a placeholder `file:` DATABASE_URL means the embedded local PG.
+const connectionString = rawUrl.startsWith("file:")
+  ? "postgresql://postgres:postgres@127.0.0.1:5432/app_db"
+  : rawUrl;
 const pool = new pg.Pool({
   connectionString,
   ssl: /@(localhost|127\.0\.0\.1)/.test(connectionString) ? false : { rejectUnauthorized: false },

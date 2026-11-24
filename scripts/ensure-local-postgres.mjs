@@ -39,6 +39,11 @@ if (!fs.existsSync(path.join(serviceDir, "index.mjs"))) {
 }
 
 console.log("[ossz] PostgreSQL not reachable on 127.0.0.1:5432 — starting embedded PGlite service");
+
+// First boot compiles the WASM postgres and initializes the data directory,
+// which can take well over 15s — give it a generous window.
+fs.mkdirSync(path.join(process.cwd(), "db", "pglite-data"), { recursive: true });
+
 const child = spawn(process.execPath, ["index.mjs"], {
   cwd: serviceDir,
   detached: true,
@@ -46,7 +51,7 @@ const child = spawn(process.execPath, ["index.mjs"], {
 });
 child.unref();
 
-for (let i = 0; i < 60; i++) {
+for (let i = 0; i < 480; i++) {
   if (await probe(PORT)) {
     console.log("[ossz] PostgreSQL ready on 127.0.0.1:5432");
     process.exit(0);

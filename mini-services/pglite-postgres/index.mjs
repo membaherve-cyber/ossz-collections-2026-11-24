@@ -19,11 +19,17 @@
  */
 import { PGlite } from "@electric-sql/pglite";
 import { PGLiteSocketServer } from "@electric-sql/pglite-socket";
+import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.resolve(here, "../../db/pglite-data");
+
+// Self-heal: PGlite's nodefs mkdirs the data dir non-recursively, so the
+// parent (../../db) must already exist. Environment restores can wipe the
+// ignored /db folder entirely — recreate it (and any lost empty dirs) here.
+fs.mkdirSync(dataDir, { recursive: true });
 
 const db = new PGlite(dataDir);
 

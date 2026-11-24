@@ -264,7 +264,11 @@ CREATE TABLE public.lookbook_items (
     image_url text NOT NULL,
     product_slug text DEFAULT ''::text NOT NULL,
     sort_order integer DEFAULT 0 NOT NULL,
-    caption_fr text DEFAULT ''::text NOT NULL
+    caption_fr text DEFAULT ''::text NOT NULL,
+    media_type text DEFAULT 'image'::text NOT NULL,
+    video_url text,
+    poster_url text,
+    duration_seconds integer
 );
 CREATE SEQUENCE public.lookbook_items_id_seq
     AS integer

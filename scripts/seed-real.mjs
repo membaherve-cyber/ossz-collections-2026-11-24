@@ -1,7 +1,10 @@
 import fs from "node:fs";
 import pg from "pg";
 
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/app_db", ssl: /@(localhost|127\.0\.0\.1)/.test(process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/app_db") ? false : { rejectUnauthorized: false } });
+const rawUrl = process.env.DATABASE_URL || "postgresql://postgres:postgres@127.0.0.1:5432/app_db";
+// Sandbox guard: a placeholder `file:` DATABASE_URL means the embedded local PG.
+const DB_URL = rawUrl.startsWith("file:") ? "postgresql://postgres:postgres@127.0.0.1:5432/app_db" : rawUrl;
+const pool = new pg.Pool({ connectionString: DB_URL, ssl: /@(localhost|127\.0\.0\.1)/.test(DB_URL) ? false : { rejectUnauthorized: false } });
 
 /**
  * Explicit image allocation.
