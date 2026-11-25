@@ -15,7 +15,7 @@ import {
 } from "@/db/schema";
 import { and, eq, sql } from "drizzle-orm";
 import { getCart, getSettings, listDeliveryZones } from "@/lib/store";
-import { getCurrentUser } from "@/lib/auth";
+import { cookieFlags, getCurrentUser } from "@/lib/auth";
 import { makeOrderNumber } from "@/lib/utils";
 import { notifyOrderPlaced } from "@/lib/notify";
 import { computeDiscount, getCoupon } from "@/lib/store";
@@ -117,10 +117,12 @@ export async function createPendingOrderAction(
   const cookieStore = await cookies();
   cookieStore.set(PENDING_ORDER_COOKIE, JSON.stringify(pendingData), {
     httpOnly: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    // Same policy as the session cookie: `Secure` would be silently dropped
+    // over plain HTTP, and `lax` is never sent inside the cross-origin preview
+    // iframe — the checkout would then “do nothing” at the proof-upload step.
     maxAge: 60 * 30, // 30 minutes
     path: "/",
+    ...(await cookieFlags()),
   });
 
   redirect(`/checkout/payment-proof?method=${encodeURIComponent(paymentMethod)}&total=${total}&order=${encodeURIComponent(orderNumber)}`);

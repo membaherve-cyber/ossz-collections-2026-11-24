@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { createHmac, randomBytes, scryptSync, timingSafeEqual } from "node:crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
 import { eq } from "drizzle-orm";
 import { db } from "@/db";
 import { users } from "@/db/schema";
@@ -38,19 +38,39 @@ export type SessionUser = {
  * Cookie flags.
  *
  * The site is viewed inside a cross-origin iframe in preview and embed tools.
- * A `SameSite=lax` cookie is not sent on those requests, so a visitor could
- * sign in successfully and still arrive logged out — the redirect worked, the
- * cookie simply never came back.
+ * Flags must therefore match the actual connection scheme, and the decision is
+ * made per request by reading `x-forwarded-proto` (the preview gateway sets it):
  *
- * `SameSite=none` fixes that, but browsers only accept it together with
- * `Secure`, which in turn requires HTTPS. Plain-HTTP localhost therefore keeps
- * `lax`, which is correct there anyway (no iframe, no HTTPS).
+ * - HTTPS (real site, https previews): `SameSite=None; Secure` is required so
+ *   the cookie survives the cross-origin iframe. `Partitioned` (CHIPS) keeps
+ *   it usable on browsers that restrict third-party cookies — Chrome stores it
+ *   scoped to this site inside the iframe instead of discarding it.
+ * - Plain HTTP (local dev, http previews): a `Secure` cookie would be silently
+ *   dropped by the browser and sign-in would "do nothing" — the request
+ *   succeeded, the redirect worked, the cookie simply never came back. Stay
+ *   `lax` and non-secure there.
+ *
+ * Set `COOKIE_CROSS_SITE=0` to force the plain, first-party behaviour.
  */
-function cookieFlags() {
-  const crossSite = process.env.COOKIE_CROSS_SITE !== "0";
-  return crossSite
-    ? { sameSite: "none" as const, secure: true }
-    : { sameSite: "lax" as const, secure: process.env.NODE_ENV === "production" };
+type CookieFlags = {
+  sameSite: "lax" | "none";
+  secure: boolean;
+  partitioned?: boolean;
+};
+
+export async function cookieFlags(): Promise<CookieFlags> {
+  if (process.env.COOKIE_CROSS_SITE === "0") {
+    return { sameSite: "lax", secure: false };
+  }
+  const headerList = await headers();
+  const proto = (headerList.get("x-forwarded-proto") ?? "")
+    .split(",")[0]
+    .trim()
+    .toLowerCase();
+  if (proto === "https") {
+    return { sameSite: "none", secure: true, partitioned: true };
+  }
+  return { sameSite: "lax", secure: false };
 }
 
 export function hashPassword(password: string): string {
@@ -80,7 +100,7 @@ export async function createSession(userId: number) {
     httpOnly: true,
     path: "/",
     maxAge: 60 * 60 * 24 * 30,
-    ...cookieFlags(),
+    ...(await cookieFlags()),
   });
 }
 
@@ -146,7 +166,7 @@ export async function getGuestId(): Promise<string> {
     httpOnly: true,
     path: "/",
     maxAge: 60 * 60 * 24 * 90,
-    ...cookieFlags(),
+    ...(await cookieFlags()),
   });
   return fresh;
 }

@@ -10,7 +10,10 @@
  * optimised images are cached, plus the offline page as a fallback. Those are
  * immutable, so they can never go stale in a harmful way.
  */
-const VERSION = "ossz-v5";
+// v6: force eviction of any caches an older worker may have left behind after
+// the session-cookie / login fix (visitors who were wedged on a stale build
+// get a clean slate the first time the browser re-checks /sw.js).
+const VERSION = "ossz-v6";
 const STATIC_CACHE = `${VERSION}-static`;
 const IMAGE_CACHE = `${VERSION}-images`;
 const OFFLINE_URL = "/offline";
