@@ -33,7 +33,9 @@ yarn-error.log*
 .php-lint/
 
 .vercel
-ossz-laravel/ - Copy.env
+# Separated Laravel codebase has its own GitHub repo
+# (membaherve-cyber/ossz-laravel-2026-11-25) — keep it out of this repo.
+ossz-laravel/
 
 # runtime database (PGlite data) — never commit binaries
 /db/
