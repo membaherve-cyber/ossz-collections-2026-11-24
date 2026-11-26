@@ -1,0 +1,196 @@
+﻿2026-11-26T20:26:11.0514499Z Current runner version: '2.338.2'
+2026-11-26T20:26:11.0535825Z ##[group]Runner Image Provisioner
+2026-11-26T20:26:11.0536658Z Hosted Compute Agent
+2026-11-26T20:26:11.0537178Z Version: 20261111.635
+2026-11-26T20:26:11.0537802Z Commit: b8a594ea514ff44cadb5342986c68b1eac6e22ed
+2026-11-26T20:26:11.0538451Z Build Date: 2026-11-11T01:49:01Z
+2026-11-26T20:26:11.0539249Z Worker ID: {198437f4-8d13-442d-903c-ec0cc1687d23}
+2026-11-26T20:26:11.0539910Z Region: westus2
+2026-11-26T20:26:11.0540443Z Cloud: Azure
+2026-11-26T20:26:11.0540940Z ##[endgroup]
+2026-11-26T20:26:11.0542367Z ##[group]Operating System
+2026-11-26T20:26:11.0542963Z Ubuntu
+2026-11-26T20:26:11.0543500Z 26.04.1
+2026-11-26T20:26:11.0543951Z LTS
+2026-11-26T20:26:11.0544429Z ##[endgroup]
+2026-11-26T20:26:11.0544961Z ##[group]Runner Image
+2026-11-26T20:26:11.0545505Z Image: ubuntu-26.04
+2026-11-26T20:26:11.0546060Z Version: 20261116.202.1
+2026-11-26T20:26:11.0547116Z Included Software: https://github.com/actions/runner-images/blob/ubuntu26/20261116.202/images/ubuntu/Ubuntu2604-Readme.md
+2026-11-26T20:26:11.0548449Z Image Release: https://github.com/actions/runner-images/releases/tag/ubuntu26%2F20261116.202
+2026-11-26T20:26:11.0549936Z ##[endgroup]
+2026-11-26T20:26:11.0550913Z ##[group]GITHUB_TOKEN Permissions
+2026-11-26T20:26:11.0552730Z Contents: read
+2026-11-26T20:26:11.0553332Z Metadata: read
+2026-11-26T20:26:11.0553806Z ##[endgroup]
+2026-11-26T20:26:11.0555591Z Secret source: Actions
+2026-11-26T20:26:11.0556392Z Cache mode: write
+2026-11-26T20:26:11.0557134Z Prepare workflow directory
+2026-11-26T20:26:11.0826945Z Prepare all required actions
+2026-11-26T20:26:11.0865174Z Getting action download info
+2026-11-26T20:26:11.4009167Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-11-26T20:26:11.5497935Z Complete job name: ftp-deploy
+2026-11-26T20:26:11.6245685Z ##[group]Run actions/checkout@v4
+2026-11-26T20:26:11.6246371Z with:
+2026-11-26T20:26:11.6246822Z   repository: membaherve-cyber/ossz-laravel-2026-11-25
+2026-11-26T20:26:11.6250103Z   token: ***
+2026-11-26T20:26:11.6250488Z   ssh-strict: true
+2026-11-26T20:26:11.6250877Z   ssh-user: git
+2026-11-26T20:26:11.6251261Z   persist-credentials: true
+2026-11-26T20:26:11.6251683Z   clean: true
+2026-11-26T20:26:11.6252065Z   sparse-checkout-cone-mode: true
+2026-11-26T20:26:11.6252508Z   fetch-depth: 1
+2026-11-26T20:26:11.6252877Z   fetch-tags: false
+2026-11-26T20:26:11.6253263Z   show-progress: true
+2026-11-26T20:26:11.6253646Z   lfs: false
+2026-11-26T20:26:11.6254003Z   submodules: false
+2026-11-26T20:26:11.6254391Z   set-safe-directory: true
+2026-11-26T20:26:11.6254827Z   allow-unsafe-pr-checkout: false
+2026-11-26T20:26:11.6255414Z ##[endgroup]
+2026-11-26T20:26:11.8133665Z Syncing repository: membaherve-cyber/ossz-laravel-2026-11-25
+2026-11-26T20:26:11.8135710Z ##[group]Getting Git version info
+2026-11-26T20:26:11.8136481Z Working directory is '/home/runner/work/ossz-laravel-2026-11-25/ossz-laravel-2026-11-25'
+2026-11-26T20:26:11.8137847Z [command]/usr/bin/git version
+2026-11-26T20:26:11.8164734Z git version 2.56.1
+2026-11-26T20:26:11.8181336Z ##[endgroup]
+2026-11-26T20:26:11.8196256Z Temporarily overriding HOME='/home/runner/work/_temp/7e9b0afb-7668-4ad9-9d70-c0ba9922a268' before making global git config changes
+2026-11-26T20:26:11.8198123Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-26T20:26:11.8200374Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ossz-laravel-2026-11-25/ossz-laravel-2026-11-25
+2026-11-26T20:26:11.8254722Z Deleting the contents of '/home/runner/work/ossz-laravel-2026-11-25/ossz-laravel-2026-11-25'
+2026-11-26T20:26:11.8257386Z ##[group]Initializing the repository
+2026-11-26T20:26:11.8261834Z [command]/usr/bin/git init /home/runner/work/ossz-laravel-2026-11-25/ossz-laravel-2026-11-25
+2026-11-26T20:26:11.8413882Z hint: Using 'master' as the name for the initial branch. This default branch name
+2026-11-26T20:26:11.8414979Z hint: will change to "main" in Git 3.0. To configure the initial branch name
+2026-11-26T20:26:11.8416003Z hint: to use in all of your new repositories, which will suppress this warning,
+2026-11-26T20:26:11.8416609Z hint: call:
+2026-11-26T20:26:11.8416962Z hint:
+2026-11-26T20:26:11.8417410Z hint: 	git config --global init.defaultBranch <name>
+2026-11-26T20:26:11.8417929Z hint:
+2026-11-26T20:26:11.8418423Z hint: Names commonly chosen instead of 'master' are 'main', 'trunk' and
+2026-11-26T20:26:11.8419365Z hint: 'development'. The just-created branch can be renamed via this command:
+2026-11-26T20:26:11.8419957Z hint:
+2026-11-26T20:26:11.8420320Z hint: 	git branch -m <name>
+2026-11-26T20:26:11.8420723Z hint:
+2026-11-26T20:26:11.8421244Z hint: Disable this message with "git config set advice.defaultBranchName false"
+2026-11-26T20:26:11.8426589Z Initialized empty Git repository in /home/runner/work/ossz-laravel-2026-11-25/ossz-laravel-2026-11-25/.git/
+2026-11-26T20:26:11.8437190Z [command]/usr/bin/git remote add origin https://github.com/membaherve-cyber/ossz-laravel-2026-11-25
+2026-11-26T20:26:11.8484022Z ##[endgroup]
+2026-11-26T20:26:11.8485025Z ##[group]Disabling automatic garbage collection
+2026-11-26T20:26:11.8486823Z [command]/usr/bin/git config --local gc.auto 0
+2026-11-26T20:26:11.8517010Z ##[endgroup]
+2026-11-26T20:26:11.8517886Z ##[group]Setting up auth
+2026-11-26T20:26:11.8522313Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-26T20:26:11.8553067Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-26T20:26:11.8921514Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-26T20:26:11.8951925Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-26T20:26:11.9184566Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-26T20:26:11.9213856Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-26T20:26:11.9442836Z [command]/usr/bin/git config --local http.https://github.com/.extraheader AUTHORIZATION: basic ***
+2026-11-26T20:26:11.9476989Z ##[endgroup]
+2026-11-26T20:26:11.9477655Z ##[group]Fetching the repository
+2026-11-26T20:26:11.9484353Z [command]/usr/bin/git -c protocol.version=2 fetch --no-tags --prune --no-recurse-submodules --depth=1 origin +2b84d8a79610396d7d87df39321bd65d425c4f11:refs/remotes/origin/main
+2026-11-26T20:26:13.1700262Z From https://github.com/membaherve-cyber/ossz-laravel-2026-11-25
+2026-11-26T20:26:13.1701411Z  * [new ref]         2b84d8a79610396d7d87df39321bd65d425c4f11 -> origin/main
+2026-11-26T20:26:13.1704233Z ##[endgroup]
+2026-11-26T20:26:13.1705135Z ##[group]Determining the checkout info
+2026-11-26T20:26:13.1706284Z ##[endgroup]
+2026-11-26T20:26:13.1713168Z [command]/usr/bin/git sparse-checkout disable
+2026-11-26T20:26:13.1760541Z [command]/usr/bin/git config --local --unset-all extensions.worktreeConfig
+2026-11-26T20:26:13.1790093Z ##[group]Checking out the ref
+2026-11-26T20:26:13.1792633Z [command]/usr/bin/git checkout --progress --force -B main refs/remotes/origin/main
+2026-11-26T20:26:13.2911767Z Switched to a new branch 'main'
+2026-11-26T20:26:13.2913279Z branch 'main' set up to track 'origin/main'.
+2026-11-26T20:26:13.2925952Z ##[endgroup]
+2026-11-26T20:26:13.2966018Z [command]/usr/bin/git log -1 --format=%H
+2026-11-26T20:26:13.2987831Z 2b84d8a79610396d7d87df39321bd65d425c4f11
+2026-11-26T20:26:13.3215193Z ##[group]Run sudo apt-get update -qq && sudo apt-get install -y -qq lftp
+2026-11-26T20:26:13.3217007Z [36;1msudo apt-get update -qq && sudo apt-get install -y -qq lftp[0m
+2026-11-26T20:26:13.3252133Z shell: /usr/bin/bash -e {0}
+2026-11-26T20:26:13.3253134Z ##[endgroup]
+2026-11-26T20:26:18.3630347Z Selecting previously unselected package lftp.
+2026-11-26T20:26:18.3935080Z (Reading database ... 
+2026-11-26T20:26:18.3935406Z (Reading database ... 5%
+2026-11-26T20:26:18.3935670Z (Reading database ... 10%
+2026-11-26T20:26:18.3935997Z (Reading database ... 15%
+2026-11-26T20:26:18.3936470Z (Reading database ... 20%
+2026-11-26T20:26:18.3936937Z (Reading database ... 25%
+2026-11-26T20:26:18.3937214Z (Reading database ... 30%
+2026-11-26T20:26:18.3937578Z (Reading database ... 35%
+2026-11-26T20:26:18.3937959Z (Reading database ... 40%
+2026-11-26T20:26:18.3938301Z (Reading database ... 45%
+2026-11-26T20:26:18.3939403Z (Reading database ... 50%
+2026-11-26T20:26:18.4131464Z (Reading database ... 55%
+2026-11-26T20:26:18.4469874Z (Reading database ... 60%
+2026-11-26T20:26:18.4643801Z (Reading database ... 65%
+2026-11-26T20:26:18.4816752Z (Reading database ... 70%
+2026-11-26T20:26:18.5117531Z (Reading database ... 75%
+2026-11-26T20:26:18.6485646Z (Reading database ... 80%
+2026-11-26T20:26:19.0959420Z (Reading database ... 85%
+2026-11-26T20:26:19.2854599Z (Reading database ... 90%
+2026-11-26T20:26:19.4830755Z (Reading database ... 95%
+2026-11-26T20:26:19.4831189Z (Reading database ... 100%
+2026-11-26T20:26:19.4831637Z (Reading database ... 214296 files and directories currently installed.)
+2026-11-26T20:26:19.4874070Z Preparing to unpack .../lftp_4.9.3-1.1ubuntu2_amd64v3.deb ...
+2026-11-26T20:26:19.4936875Z Unpacking lftp (4.9.3-1.1ubuntu2) ...
+2026-11-26T20:26:19.8040146Z Setting up lftp (4.9.3-1.1ubuntu2) ...
+2026-11-26T20:26:19.8066987Z Processing triggers for hicolor-icon-theme (0.18-2build1) ...
+2026-11-26T20:26:20.2567880Z Processing triggers for man-db (2.13.1-1build1) ...
+2026-11-26T20:26:20.2590197Z Not building database; man-db/auto-update is not 'true'.
+2026-11-26T20:26:21.4317757Z 
+2026-11-26T20:26:21.4318252Z Running kernel seems to be up-to-date.
+2026-11-26T20:26:21.4318502Z 
+2026-11-26T20:26:21.4318601Z Restarting services...
+2026-11-26T20:26:21.4405564Z 
+2026-11-26T20:26:21.4406101Z Service restarts being deferred:
+2026-11-26T20:26:21.4417030Z  systemctl restart hosted-compute-agent.service
+2026-11-26T20:26:21.4417340Z 
+2026-11-26T20:26:21.4417482Z No containers need to be restarted.
+2026-11-26T20:26:21.4417715Z 
+2026-11-26T20:26:21.4417858Z No user sessions are running outdated binaries.
+2026-11-26T20:26:21.4418045Z 
+2026-11-26T20:26:21.4418210Z No VM guests are running outdated hypervisor (qemu) binaries on this host.
+2026-11-26T20:26:22.2645609Z ##[group]Run set -euo pipefail
+2026-11-26T20:26:22.2645895Z [36;1mset -euo pipefail[0m
+2026-11-26T20:26:22.2646184Z [36;1mlftp -u "$FTP_USER","$FTP_PASS" "$FTP_HOST" <<'LFTP'[0m
+2026-11-26T20:26:22.2646501Z [36;1mset ssl:verify-certificate no[0m
+2026-11-26T20:26:22.2646740Z [36;1mset ftp:passive-mode on[0m
+2026-11-26T20:26:22.2646966Z [36;1mset net:max-retries 6[0m
+2026-11-26T20:26:22.2647187Z [36;1mset net:timeout 30[0m
+2026-11-26T20:26:22.2647526Z [36;1mset net:total-timeout 1200[0m
+2026-11-26T20:26:22.2647818Z [36;1mmirror -R --no-delete --no-perms --parallel=4 \[0m
+2026-11-26T20:26:22.2648151Z [36;1m  --exclude '^\.git/' \[0m
+2026-11-26T20:26:22.2648378Z [36;1m  --exclude '^\.github/' \[0m
+2026-11-26T20:26:22.2648622Z [36;1m  --exclude '^bootstrap/cache/' \[0m
+2026-11-26T20:26:22.2649116Z [36;1m  --exclude 'database/database\.sqlite$' \[0m
+2026-11-26T20:26:22.2649374Z [36;1m  --exclude '^vendor/' \[0m
+2026-11-26T20:26:22.2649629Z [36;1m  --exclude '^storage/' \[0m
+2026-11-26T20:26:22.2649850Z [36;1m  . public_html/[0m
+2026-11-26T20:26:22.2650057Z [36;1mquit[0m
+2026-11-26T20:26:22.2650241Z [36;1mLFTP[0m
+2026-11-26T20:26:22.2650496Z [36;1mecho "Deployed to Namecheap public_html (upload-only mirror)."[0m
+2026-11-26T20:26:22.2681549Z shell: /usr/bin/bash -e {0}
+2026-11-26T20:26:22.2681766Z env:
+2026-11-26T20:26:22.2682152Z   FTP_HOST: ***
+2026-11-26T20:26:22.2682345Z   FTP_USER: ***
+2026-11-26T20:26:22.2682522Z   FTP_PASS: ***
+2026-11-26T20:26:22.2682698Z ##[endgroup]
+2026-11-26T20:26:22.2778054Z net:total-timeout: no such variable. Use `set -a' to look at all variables.
+2026-11-26T20:26:22.2783312Z mirror: unrecognized option '--no-delete'
+2026-11-26T20:26:22.2783654Z Try `help mirror' for more information.
+2026-11-26T20:26:22.2797758Z ##[error]Process completed with exit code 1.
+2026-11-26T20:26:22.2973300Z Post job cleanup.
+2026-11-26T20:26:22.3681751Z [command]/usr/bin/git version
+2026-11-26T20:26:22.3719642Z git version 2.56.1
+2026-11-26T20:26:22.3750199Z Temporarily overriding HOME='/home/runner/work/_temp/3eb81d9a-0f5a-4d8c-a02e-4b66e54f8419' before making global git config changes
+2026-11-26T20:26:22.3751210Z Adding repository directory to the temporary git global config as a safe directory
+2026-11-26T20:26:22.3754789Z [command]/usr/bin/git config --global --add safe.directory /home/runner/work/ossz-laravel-2026-11-25/ossz-laravel-2026-11-25
+2026-11-26T20:26:22.3789366Z [command]/usr/bin/git config --local --name-only --get-regexp core\.sshCommand
+2026-11-26T20:26:22.3839781Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :"
+2026-11-26T20:26:22.4372893Z [command]/usr/bin/git config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-11-26T20:26:22.4400515Z http.https://github.com/.extraheader
+2026-11-26T20:26:22.4410170Z [command]/usr/bin/git config --local --unset-all http.https://github.com/.extraheader
+2026-11-26T20:26:22.4442227Z [command]/usr/bin/git submodule foreach --recursive sh -c "git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :"
+2026-11-26T20:26:22.4682588Z [command]/usr/bin/git config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-11-26T20:26:22.4713460Z [command]/usr/bin/git submodule foreach --recursive git config --local --show-origin --name-only --get-regexp remote.origin.url
+2026-11-26T20:26:22.5091484Z Cleaning up orphan processes
+2026-11-26T20:26:22.5409646Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
