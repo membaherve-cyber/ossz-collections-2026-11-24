@@ -63,11 +63,41 @@ export async function cookieFlags(): Promise<CookieFlags> {
     return { sameSite: "lax", secure: false };
   }
   const headerList = await headers();
-  const proto = (headerList.get("x-forwarded-proto") ?? "")
-    .split(",")[0]
-    .trim()
-    .toLowerCase();
-  if (proto === "https") {
+  /**
+   * Detect the visitor's real connection scheme.
+   *
+   * The preview panel (and any TLS-terminating gateway in front of this app)
+   * forwards requests to Next.js over plain HTTP, so `x-forwarded-proto` can
+   * read "http" even for visitors on https. If we trusted that alone, the
+   * session cookie would be issued as Lax/non-secure and silently dropped by
+   * browsers inside the panel's cross-origin https iframe — sign-in would
+   * succeed server-side yet bounce straight back to /login.
+   *
+   * Two extra signals reveal the real scheme and are always present exactly
+   * where it matters:
+   * - `origin`: sent by every server-action POST (the login form), carrying
+   *   the page's actual origin, e.g. https://…;
+   * - `referer`: sent on iframe document loads, carrying the parent page's
+   *   https origin (strict-origin-when-cross-origin is the default policy).
+   *
+   * Issuing `SameSite=None; Secure; Partitioned` (CHIPS) for any https signal
+   * is safe in every environment:
+   * - https visitors and the cross-origin preview: the cookie survives;
+   * - http://localhost:3000 in a top-level tab: no https signal is present,
+   *   so we still issue the plain lax cookie (and browsers also accept Secure
+   *   cookies from localhost if one ever slips through);
+   * - a genuinely plain-http production host: no https signal, lax cookie.
+   */
+  const httpsSignals = [
+    headerList.get("x-forwarded-proto"),
+    headerList.get("x-forwarded-scheme"),
+    headerList.get("origin"),
+    headerList.get("referer"),
+  ];
+  const isHttps = httpsSignals.some((value) =>
+    (value ?? "").split(",")[0].trim().toLowerCase().startsWith("https"),
+  );
+  if (isHttps) {
     return { sameSite: "none", secure: true, partitioned: true };
   }
   return { sameSite: "lax", secure: false };
