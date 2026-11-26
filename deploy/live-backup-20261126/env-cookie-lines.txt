@@ -1,0 +1,4 @@
+APP_URL=https://osszcollection.com
+SESSION_DRIVER=database
+SESSION_LIFETIME=120
+IMAGEKIT_URL_ENDPOINT="https://ik.imagekit.io/ez63n4cvn"
