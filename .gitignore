@@ -55,3 +55,4 @@ preview-*.png
 
 # large binaries
 *.zip
+deploy/laravel-repo-work/
