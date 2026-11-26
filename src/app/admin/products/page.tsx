@@ -5,6 +5,7 @@ import { db } from "@/db";
 import { categories, collections, productImages, productVariants, products } from "@/db/schema";
 import { ActionForm } from "@/components/action-form";
 import { ApiForm } from "@/components/api-form";
+import { AutoOpenDetails } from "@/components/auto-open-details";
 import { formatXAF } from "@/lib/utils";
 
 import { guardPage } from "@/lib/guard";
@@ -30,7 +31,7 @@ export default async function AdminProducts() {
         the moment you press save.
       </p>
 
-      <details className="card mt-6 p-6" open={rows.length === 0}>
+      <AutoOpenDetails className="card mt-6 p-6" openOnMount={rows.length === 0}>
         <summary className="cursor-pointer text-sm font-medium">+ Add a new piece</summary>
         <ActionForm action="saveProductAction" submitLabel="Publish this piece" className="mt-5 grid gap-4 sm:grid-cols-2">
           <div className="sm:col-span-2">
@@ -86,7 +87,7 @@ export default async function AdminProducts() {
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isPublished" defaultChecked /> Visible on the site</label>
           <label className="flex items-center gap-2 text-sm"><input type="checkbox" name="isFeatured" /> Feature on the homepage</label>
         </ActionForm>
-      </details>
+      </AutoOpenDetails>
 
       <div className="mt-8 overflow-x-auto">
         <table className="w-full min-w-[720px] text-sm">
